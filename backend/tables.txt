@@ -4,7 +4,7 @@ create table student (userid varchar(200) PRIMARY KEY, password varchar(200), na
 
 create table scholarship(uid varchar(200) PRIMARY KEY,name varchar(200),amount varchar(200),provider varchar(200),category varchar(200),branch varchar(200));
 
-create table applied_for(userid varchar(200) PRIMARY KEY, apl_dat varchar(2000), uid varchar(200));
+create table applied_for(userid varchar(200), apl_dat varchar(2000), uid varchar(200));
 
 create table internship(uid varchar(200) PRIMARY KEY,itr_name varchar(200), emp_name varchar(200), stipend varchar(200), branch varchar(200),city varchar(200), description varchar(2000),gpa varchar(200));
 

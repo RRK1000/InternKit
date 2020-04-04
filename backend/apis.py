@@ -7,6 +7,8 @@ import sqlite3
 import requests
 import random
 import datetime
+import jwt
+from uuid import uuid4
 
 RS400=400
 
@@ -38,25 +40,41 @@ def getmaxid(table):
 
 #<----------------------------Check User Exists------------------------------->
 '''function is for checking if a userid exist in a table but the function can also be reused to all the tuple of a given user id for a given table in any api'''
-def check_user_exists(table,userid):
+def check_user_exists(table,userid,uid):
 	con=sqlite3.connect("scokit.db")
 	cursorobj=con.cursor()
 	if(table=="scholarship" or table=="internship"):
 		l=list(cursorobj.execute("select * from "+table+" where uid='"+userid+"'"))
-		return l	
+		return l
+	elif(table=="applied_for"):
+		# print("select * from "+table+" where userid='"+userid+"'"+" and uid='"+uid+"'")
+		l=list(cursorobj.execute("select * from "+table+" where userid='"+userid+"'"+" and uid='"+uid+"'"))
+		return l
+		print(l)
 	l=list(cursorobj.execute("select * from "+table+" where userid='"+userid+"'"))
 	return l
 
 #<----------------------SignUp------------------------>
 '''signup api where the students and employees are added to the respective table by checking the usertype key of the body you send.
 Method : PUT
-url : http://localhost:5000//api/v1/signup
+url : http://localhost:5000/api/v1/signup
 body:
 {
 	"username":"vishnu",
 	"password":"12345678",
 	"name":"Vishnu",
 	"usertype":"student"
+}
+
+{"username":"hi",
+ "password":"v",
+ "name":"Vishnu",
+ "usertype":"student",
+ "cname":"V",
+ "column_details":"['cname','name']",
+ "new_details":"['vikrant','letspla']",
+ "current_password":"v",
+ "new_password":"viz"
 }
 Restrictions in values of the keys sent in body:
 username--> anything
@@ -70,14 +88,16 @@ def signup():
 	if(request.method!="PUT"):
 		return jsonify({}),RS405
 	if(not("username" in req and "password" in req and "name" in req and "usertype" in req)):
+		print("Hello\n")
 		return jsonify({}),RS400
 	username=req["username"]
 	name=req["name"]
 	usertype=req["usertype"]
 	password=req["password"]
-	if(len(password)>7):
+	if(len(password)<7):
 		return jsonify({}),RS400
 	if(usertype=="student"):
+		print("HI 	")
 		table="student"
 	elif(usertype=="employee"):
 		table="emp_login"
@@ -87,7 +107,7 @@ def signup():
 		return jsonify({}),RS400
 	if name=="":
 		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
 	print(l)
 	if(len(l)!=0):
 		return jsonify({}),RS400
@@ -122,21 +142,24 @@ def deluid():
 	usertype=request.args.get("usertype")
 	if(usertype=="student"):
 		table="student"
+		table1="s_profile"
 	elif(usertype=="employee"):
 		table="emp_login"
+		table1="e_profile"
 	elif(usertype=="scholarship"):
 		table="scholarship"
 	elif(usertype=="internship"):
 		table="internship"
 	else:
 		return jsonify({}),RS400 
-	l=check_user_exists(table,name)
-
+	l=check_user_exists(table,name,'')
+	print(l)
 	if(len(l)!=0):
 		con=sqlite3.connect("scokit.db")
 		cursorobj=con.cursor()
-		if(table=="s_profile" or table=="e_profile"):
+		if(table=="student" or table=="emp_login"):
 			cursorobj.execute("delete from "+ table+" where userid='"+name+"'")
+			cursorobj.execute("delete from "+ table1+" where userid='"+name+"'")
 		elif(table=="scholarship" or table=="internship"):
 			cursorobj.execute("delete from "+ table+" where uid='"+name+"'")
 		else:
@@ -178,10 +201,10 @@ def login():
 		return jsonify({}),RS400 
 	if username=="":
 		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
 	print(l)
 	if(len(l)!=0 and l[0][1]==password):
-		return jsonify({}),RS200
+		return str(jwt.encode({'token': str(uuid4())}, 'abcdefgh', algorithm='HS256')),RS200
 	else:
 		return jsonify({}),RS400
 
@@ -194,8 +217,8 @@ bodies:
 {
 	"uid" : "vishnu",
 	"usertype" : "student",
-	"column_details":"["dob","phone","snetwork"]",
-	"new_details":"["16/02/1999","XXXXXXXXXXX","git-github.com;link-linkeldin.com"]"
+	"column_details":"['dob','phone','snetwork']",
+	"new_details":"['16/02/1999','XXXXXXXXXXX','git-github.com;link-linkeldin.com']"
 }
 Restrictions:
 uid--> anything until it exists in table
@@ -206,13 +229,18 @@ new_details and column_details must be in the same order
 '''
 @app.route("/api/v1/editdetails",methods=["POST"])
 def editdetails():
+	print("Hello")
 	req=request.get_json()
+	print("Welcome1")
 	if(request.method!="POST"):
 		return jsonify({}),RS405
+	print("Welcome2")
 	if(not("uid" in req and "usertype" in req and "column_details" in req and "new_details" in req)):
+		print("HOOOOIIII")
 		return jsonify({}),RS400
 	username=req["uid"]
 	usertype=req["usertype"]
+	print("Welcome3")
 	if(usertype=="student"):
 		table="s_profile"
 	elif(usertype=="employee"):
@@ -222,12 +250,16 @@ def editdetails():
 	elif(usertype=="internship"):
 		table="internship"
 	else:
+		print("HI##")
 		return jsonify({}),RS400 
 	if username=="":
+		print("HOOOO")
 		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
+	print("HI")
 	print(l)
 	if(len(l)==0):
+		print("le")
 		return jsonify({}),RS400
 	else:
 		cdetails=eval(req["column_details"])
@@ -240,6 +272,7 @@ def editdetails():
 		elif(table=="scholarship" or table=="internship"):
 			sstr=sstr[:len(sstr)-1]+" where uid='"+username+"'"
 		else:
+			print("Hiiiiiiiii")
 			return jsonify({}),RS400
 		print(sstr)
 		con=sqlite3.connect("scokit.db")
@@ -278,7 +311,7 @@ def editpassword():
 	usertype=req["usertype"]
 	cpassword=req["current_password"]
 	npassword=req["new_password"]
-	if(len(npassword)>7):
+	if(len(npassword)<7):
 		return jsonify({}),RS400
 	if(usertype=="student"):
 		table="student"
@@ -288,7 +321,7 @@ def editpassword():
 		return jsonify({}),RS400 
 	if username=="":
 		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
 	print(l)
 	if(len(l)==0):
 		return jsonify({}),RS400
@@ -340,8 +373,8 @@ def getdetails():
 	if username=="":
 		return jsonify({}),RS400
 	if(usertype=="student" or usertype=="employee"):	
-		l=check_user_exists(table,username)
-		lprofile=check_user_exists(table1,username)
+		l=check_user_exists(table,username,'')
+		lprofile=check_user_exists(table1,username,'')
 		print(l)
 		print(lprofile)
 		if(len(l)!=0 and len(lprofile)!=0):
@@ -354,17 +387,17 @@ def getdetails():
 		else:
 			return jsonify({}),RS400
 	if(usertype=="scholarship" or usertype=="internship"):	
-		l=check_user_exists(table,username)
+		l=check_user_exists(table,username,'')
 		print(l)
 		if(len(l)!=0):
 			if(table=='scholarship'):
-				l1=check_user_exists("emp_login",l[0][3])
-				l2=check_user_exists("e_profile",l[0][3])
+				l1=check_user_exists("emp_login",l[0][3],'')
+				l2=check_user_exists("e_profile",l[0][3],'')
 				return jsonify({"uid":l[0][0],"name":l[0][1],"amount":l[0][2],"provider_name":l1[0][2],"provider_organisation":l2[0][2],"category":l[0][4],"branch":l[0][5],"provider_id":l[0][3]}),RS200
 			elif(table=='internship'):
-				l1=check_user_exists("emp_login",l[0][2])
-				l2=check_user_exists("e_profile",l[0][2])
-				return jsonify({"uid":l[0][0],"itr_name":l[0][1],"emp_name":l1[0][2],"stipend":l[0][3],"branch":l[0][4],"city":l[0][5],"description":l[0][6],"gpa":l[0][7],"cname":l2profile[0][7],"emp_id":l[0][2]}),RS200
+				l1=check_user_exists("emp_login",l[0][2],'')
+				l2=check_user_exists("e_profile",l[0][2],'')
+				return jsonify({"uid":l[0][0],"itr_name":l[0][1],"emp_name":l1[0][2],"stipend":l[0][3],"branch":l[0][4],"city":l[0][5],"description":l[0][6],"gpa":l[0][7],"cname":l2[0][7],"emp_id":l[0][2]}),RS200
 			else:
 				return jsonify({}).RS400
 		else:
@@ -399,7 +432,7 @@ OR
 	"cname":"msrXD",
 	"snetwork":"git-github.com;link-linkeldin.com",				# not mandatory field 
 	"post":"some post in company",								# not mandatory field 
-	"cdescription":"company description"                        # not mandatory field  
+	"cdescription":"company description",                       # not mandatory field  
 	"usertype":"employee"
 }
 
@@ -408,25 +441,29 @@ Please give it in the same format as given in the above example
 '''
 @app.route("/api/v1/addprofile",methods=["POST"])
 def profile():
+	print("HII")
 	req=request.get_json()
+	print(req)
 	if(request.method!="POST"):
 		return jsonify({}),RS405
+	print("Noooooo")
 	if(not("username" in req and "dob" in req and "email" in req and "phone" in req and "usertype" in req)):
+		print("COvid")
 		return jsonify({}),RS400
+	print("No covid")
 	username=req["username"]
-	name=req["name"]
 	usertype=req["usertype"]
 	if(usertype=="student"):
 		table="s_profile"
 	elif(usertype=="employee"):
 		table="e_profile"
+		print("Vishnu")
 	else:
+		print("Hello")
 		return jsonify({}),RS400 
 	if username=="":
 		return jsonify({}),RS400
-	if name=="":
-		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
 	print(l)
 	if(len(l)!=0):
 		return jsonify({}),RS400
@@ -524,19 +561,21 @@ def add_internship_scholarship():
 			return jsonify({}),RS400
 	else:
 		return jsonify({}),RS400 
-	if username=="":
+	if(username==""):
 		return jsonify({}),RS400
-	if name=="":
-		return jsonify({}),RS400
-	l=check_user_exists(table,username)
+	l=check_user_exists(table,username,'')
 	print(l)
 	if(len(l)!=0):
 		return jsonify({}),RS400
 	con=sqlite3.connect("scokit.db")
 	cursorobj=con.cursor()
 	if(table=="scholarship"):
+		if(req["name"]==""):
+			return jsonify({}),RS400
 		sstr="insert into "+ table +" values("+"'"+username+"'"+","+"'"+req["name"]+"'"+","+"'"+req["amount"]+"'"+","+"'"+req["provider"]+"'"+","+"'"+req["category"]+"'"+","+"'"+req["branch"]+"'"+")"
 	elif(table=='internship'):
+		if(req["itr_name"]==""):
+			return jsonify({}),RS400
 		sstr="insert into "+ table +" values("+"'"+username+"'"+","+"'"+req["itr_name"]+"'"+","+"'"+req["emp_name"]+"'"+","+"'"+req["stipend"]+"'"+","+"'"+req["branch"]+"'"+","+"'"+req["city"]+"'"+","+"'"+req["description"]+"'"+","+"'"+req["gpa"]+"'"+")"
 	else:
 		return jsonify({}),RS400
@@ -573,7 +612,7 @@ def apply():
 	uid=req["uid"]
 	usertype=req["usertype"]
 	table="applied_for"
-	apl_dat=req["apl_data"]
+	apl_dat=req["apl_dat"]
 	if(usertype=="scholarship"):
 		type="scholarship"
 	elif(usertype=="internship"):
@@ -584,10 +623,11 @@ def apply():
 		return jsonify({}),RS400
 	if uid=="":
 		return jsonify({}),RS400
-	l=check_user_exists(table,username)
-	l1=check_user_exists(type,uid)
+	l=check_user_exists(table,username,uid)
+	l1=check_user_exists(type,uid,'')
 	print(l)
 	if(len(l)!=0 or len(l1)==0):
+		print(len(l),len(l1))
 		return jsonify({}),RS400
 	con=sqlite3.connect("scokit.db")
 	cursorobj=con.cursor()
