@@ -9,21 +9,68 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
 export default function Header() {
   const classes = useStyles();
+  const isLoggedIn = false;
 
+  const loggedInComponent = (
+    <List component="nav">
+      <ListItem component="div">
+        <ListItemText inset>
+          <Link href="/" color="inherit">
+            Home
+          </Link>
+        </ListItemText>
+
+        <ListItemText inset>
+          <Link href="/profile" color="inherit">
+            Profile
+          </Link>
+        </ListItemText>
+
+        <ListItemText inset>
+          <Link href="/logout" color="inherit">
+            Logout
+          </Link>
+        </ListItemText>
+      </ListItem>
+    </List>
+  );
+  const loggedOutComponent = (
+    <List component="nav">
+      <ListItem component="div">
+        <ListItemText inset>
+          <Link href="/" color="inherit">
+            Home
+          </Link>
+        </ListItemText>
+
+        <ListItemText inset>
+          <Link href="/signin" color="inherit">
+            Sign In
+          </Link>
+        </ListItemText>
+
+        <ListItemText inset>
+          <Link href="/signup" color="inherit">
+            Register
+          </Link>
+        </ListItemText>
+      </ListItem>
+    </List>
+  );
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -32,21 +79,7 @@ export default function Header() {
             InternKit
           </Typography>
 
-          <List component="nav">
-            <ListItem component="div">
-              <ListItemText inset>
-                  <Link href="/" color="inherit">Home</Link>
-              </ListItemText>
-
-              <ListItemText inset>
-                  <Link href="/signin" color="inherit">Sign In</Link>
-              </ListItemText>
-
-              <ListItemText inset>
-                  <Link href="/signup" color="inherit">Register</Link>
-              </ListItemText>
-            </ListItem>
-          </List>
+          {isLoggedIn ? loggedInComponent : loggedOutComponent}
         </Toolbar>
       </AppBar>
     </div>
