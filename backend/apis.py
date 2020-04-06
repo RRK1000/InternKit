@@ -255,6 +255,9 @@ body:
 	"password":"12345678",
 	"usertype":"student"
 }
+tokene=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJub25jZSI6ImE1ODAyYzgwLTdiYTQtNGZiYy1iOWUzLTRkZDc0MjJiYTEwYSIsInVzZXJuYW1lIjoidmlzaG51In0.gYab9m4KzWdLZ0jA__EO7G9XWc8BsXC27DAY8jwHcnI
+tokens=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJub25jZSI6IjI3NGZiZDU2LTEzYTMtNGRkMi1iYzM1LTI5Y2I3MWVjN2QwNiIsInVzZXJuYW1lIjoidmlzaG51In0.-XFHkXdNcHyUAM3Ibbp7Enky0dRotrD6IaNGCe8pVMc
+
 Restrictions:
 username--> anything until its there in the table
 password--> length more than 8 characters
@@ -586,9 +589,10 @@ body:
 {
 	"username":"vishnu",
 	"dob":"06/03/1999",
+    "token":"token",
 	"email":"xxxxxx.com",
 	"phone":"XXXXXXXXXXX",
-	"education":"["School-grade","precollege-grade"]",        # actually you can send anything, I m just gonna store it as it as, I m not gonna use it, you will need to use it
+	"education":"[School-grade,precollege-grade]",        # actually you can send anything, I m just gonna store it as it as, I m not gonna use it, you will need to use it
 	"college":"Current college",
 	"branch":"branch you are studying",
 	"snetwork":"git-github.com;link-linkeldin.com",           # different links separated by ; and, link and title separated by -			# not mandatory field 
@@ -601,6 +605,7 @@ OR
 {
 	"username":"vishnu",
 	"dob":"06/03/1999",
+    "token":"token",
 	"email":"xxxxxx.com",
 	"phone":"XXXXXXXXXXX",
 	"cname":"msrXD",
