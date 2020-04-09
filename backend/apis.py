@@ -240,7 +240,7 @@ def deluid():
         else:
             return jsonify({}), RS400
         con.commit()
-        return jsonify({}), RS201
+        return jsonify({}), RS200
     return jsonify({}), RS400
 
 
@@ -974,13 +974,177 @@ def apply():
     return jsonify({}), RS201
 
 
-
-# API's to be done
 # <---------------------------------Get all students of internship or scholarship---------------------------->
-# Tell me what all data should be sent back
+'''
+Api to get all students who have enrolled for scholarships/internships
+Method: GET
+url:/api/v1/students_internship_scholarship?uid=i_0
+
+Restrictions:
+uid--> must be present in the table applied_for
+'''
+@app.route("/api/v1/students_internship_scholarship", methods=["GET"])
+def get_students():
+    req = request.get_json()
+    if request.method != "GET":
+        return jsonify({}), RS405
+    username = request.args.get("uid")
+    if username == "":
+        return jsonify({}), RS400
+    table="applied_for"
+    con = sqlite3.connect("scokit.db")
+    cursorobj = con.cursor()
+    print("select * from " + table + " where uid='" + username + "'")
+    students_list = list(
+        cursorobj.execute("select * from " 
+                                            + table 
+                                            + " where uid='" 
+                                            + username + 
+                                            "'"
+                            )
+    )
+    students_dict={}
+    for _ in students_list:
+        if(_[0] not in students_dict):
+            students_dict[_[0]]=_[1]
+    print(students_dict)
+    return jsonify(students_dict),RS200
 # <---------------------------------Get all internships or scholarships of a student applied or an employee posted----------------------->
+'''
+Api to get all internships or scholarships of a student applied or an employee posted
+Method: GET
+url:/api/v1/internships_scholarships_posted_applied?uid=vishnu&usertype=employee
+
+Restrictions:
+uid--> must be present in the table applied_for
+usertype--> student or employee
+'''
+@app.route("/api/v1/internships_scholarships_posted_applied", methods=["GET"])
+def get_internships_scholarships():
+    con = sqlite3.connect("scokit.db")
+    cursorobj = con.cursor()
+    req = request.get_json()
+    if request.method != "GET":
+        return jsonify({}), RS405
+    username = request.args.get("uid")
+    usertype = request.args.get("usertype")
+    if username == "":
+        return jsonify({}), RS400
+    if(usertype=="student"):
+        table="applied_for"
+        print("select * from " + table + " where userid='" + username + "'")
+        students_list = list(
+            cursorobj.execute("select * from " 
+                                                + table 
+                                                + " where userid='" 
+                                                + username + 
+                                                "'"
+                                )
+        )
+        students_dict={}
+        for _ in students_list:
+            if(_[2][0]=='i'):
+                if(_[2] not in students_dict):
+                    students_dict[_[2]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=internship").json()
+            elif(_[2][0]=='s'):
+                if(_[2] not in students_dict):
+                    students_dict[_[2]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
+            else:
+                return jsonify({}),RS200    
+        # print(students_dict)
+        return jsonify(students_dict),RS200
+    if(usertype=="employee"):
+        # print("select * from " + table + " where emp_name='" + username + "'")
+        internscholarship_list = list(
+            cursorobj.execute("select * from " 
+                                                + "internship" 
+                                                + " where emp_name='" 
+                                                + username + 
+                                                "'"
+                                )
+        )
+        internscholarship_list.extend(list(
+            cursorobj.execute("select * from " 
+                                                + "scholarship" 
+                                                + " where provider='" 
+                                                + username + 
+                                                "'"
+                                )
+            )
+        )
+        print(internscholarship_list,"HIIIIIIIIIIIIIIIIIIIIII")
+        internscholarship_dict={}
+        for _ in internscholarship_list:
+            if(_[0][0]=="s"):
+                type="scholarship"
+            elif(_[0][0]=="i"):
+                type="internship"
+            else:
+                return jsonify({}),RS500
+            if(_[0] not in internscholarship_dict):
+                internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+    return (internscholarship_dict),RS200
+
 # Tell me what all data should be sent back
-# <---------------------------------Delete the apllications from applied_for table if the application is deleted by the student---------------->
+# <---------------------------------Delete the applications from applied_for table if the application is deleted by the student---------------->
+"""
+delete is to delete any tuple of a table other than applied_for in the database"
+Method : DELETE
+url: /api/v1/delete_applied?userid=vishnu&uid=s_0
+
+Restrictions:
+uid--> can be anything until its there in the table
+usertype--> student or employee or scholarship or internship
+
+"""
+@app.route("/api/v1/delete_applied", methods=["DELETE"])
+def delapplied():
+    if request.method != "DELETE":
+        return jsonify({}), RS405
+    name = request.args.get("userid")
+    uid = request.args.get("uid")
+    table="applied_for"
+    l = check_user_exists(table, name, uid)
+    print(l)
+    if len(l) != 0:
+        con = sqlite3.connect("scokit.db")
+        cursorobj = con.cursor()
+        cursorobj.execute("delete from " + table + " where userid='" + name + "' and uid='"+uid+"'")
+        con.commit()
+        return jsonify({}), RS200
+    else:
+        return jsonify({}), RS400
+
+#<-----------------------------------Get list of all available internships or scholarships------------------------------->
+'''
+Api to call list of all available internships and scholarships
+url:/api/v1/all_internship_scholarship
+'''
+@app.route("/api/v1/all_internship_scholarship", methods=["GET"])
+def all_internships_scholarships():
+    if request.method != "GET":
+        return jsonify({}), RS405
+    con = sqlite3.connect("scokit.db")
+    cursorobj = con.cursor()
+    # print("select * from " + table + " where uid='" + username + "'")
+    scholarship_list = list(
+        cursorobj.execute("select * from scholarship")
+    )
+    internship_list=list(
+        cursorobj.execute("select * from internship")
+    )
+    scholarship_list.extend(internship_list)
+    internscholarship_dict={}
+    for _ in scholarship_list:
+        if(_[0][0]=="s"):
+            type="scholarship"
+        elif(_[0][0]=="i"):
+            type="internship"
+        else:
+            return jsonify({}),RS500
+        if(_[0] not in internscholarship_dict):
+            internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+    return (internscholarship_dict),RS200
 
 if __name__ == "__main__":
     app.debug = True
