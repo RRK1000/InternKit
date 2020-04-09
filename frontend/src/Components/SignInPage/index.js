@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from 'react-router-dom';
 import axios from "axios";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
@@ -8,6 +9,7 @@ import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
 
+const isLoggedIn = require("../../util/auth").isLoggedIn;
 const setToken = require("../../util/auth").setToken;
 
 const useStyles = (theme) => ({
@@ -36,6 +38,7 @@ class SignIn extends React.Component {
     this.doLogin = this.doLogin.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
   handleChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
@@ -55,6 +58,7 @@ class SignIn extends React.Component {
   }
   render() {
     const { classes } = this.props;
+    if(isLoggedIn()) return <Redirect to='/'  />
     return (
       <Container maxWidth="sm">
         <Typography className={classes.heading} variant="h4">

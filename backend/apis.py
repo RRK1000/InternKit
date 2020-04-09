@@ -1,15 +1,18 @@
+from uuid import uuid4
+import jwt
+import datetime
+import random
+import requests
+import sqlite3
 from flask import Flask, render_template, jsonify, request, abort
+from flask_cors import CORS
+
 import sys
 sys.path.insert(1, 'intelligent_component/')
 import my_probability_model
-#import checking
+
 app = Flask(__name__)
-import sqlite3
-import requests
-import random
-import datetime
-import jwt
-from uuid import uuid4
+CORS(app)
 
 RS400 = 400
 RS401 = 401
@@ -21,6 +24,7 @@ RS204 = 204
 jwtSecret = "ideallyReadFromFile"
 
 shalist = "0123456789abcdef"
+
 
 def checksha(string):
     if len(string) != 40:
@@ -55,7 +59,8 @@ def check_user_exists(table, userid, uid):
     cursorobj = con.cursor()
     if table == "scholarship" or table == "internship":
         l = list(
-            cursorobj.execute("select * from " + table + " where uid='" + userid + "'")
+            cursorobj.execute("select * from " + table +
+                              " where uid='" + userid + "'")
         )
         return l
     elif table == "applied_for":
@@ -75,21 +80,22 @@ def check_user_exists(table, userid, uid):
         return l
         print(l)
     l = list(
-        cursorobj.execute("select * from " + table + " where userid='" + userid + "'")
+        cursorobj.execute("select * from " + table +
+                          " where userid='" + userid + "'")
     )
     return l
 
 
 def checkJwtWithUser(token, username):
-	try:
-		decoded = jwt.decode(str(token), jwtSecret, algorithms=['HS256'])
-		if decoded["username"] == username:
-			return True
-		else:
-			raise Exception("MisMatch", "username doesn't match token")
-	except Exception as e:
-		print(e)
-		return False
+    try:
+        decoded = jwt.decode(str(token), jwtSecret, algorithms=['HS256'])
+        if decoded["username"] == username:
+            return True
+        else:
+            raise Exception("MisMatch", "username doesn't match token")
+    except Exception as e:
+        print(e)
+        return False
 
 
 # <----------------------SignUp------------------------>
@@ -235,10 +241,13 @@ def deluid():
         con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
         if table == "student" or table == "emp_login":
-            cursorobj.execute("delete from " + table + " where userid='" + name + "'")
-            cursorobj.execute("delete from " + table1 + " where userid='" + name + "'")
+            cursorobj.execute("delete from " + table +
+                              " where userid='" + name + "'")
+            cursorobj.execute("delete from " + table1 +
+                              " where userid='" + name + "'")
         elif table == "scholarship" or table == "internship":
-            cursorobj.execute("delete from " + table + " where uid='" + name + "'")
+            cursorobj.execute("delete from " + table +
+                              " where uid='" + name + "'")
         else:
             return jsonify({}), RS400
         con.commit()
@@ -289,7 +298,8 @@ def login():
     print(l)
     if len(l) != 0 and l[0][1] == password:
         return (
-            jwt.encode({"nonce": str(uuid4()), "username": username}, jwtSecret, algorithm="HS256"),
+            jwt.encode({"nonce": str(uuid4()), "username": username},
+                       jwtSecret, algorithm="HS256"),
             RS200,
         )
     else:
@@ -996,24 +1006,26 @@ def get_students():
     username = request.args.get("uid")
     if username == "":
         return jsonify({}), RS400
-    table="applied_for"
+    table = "applied_for"
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     print("select * from " + table + " where uid='" + username + "'")
     students_list = list(
-        cursorobj.execute("select * from " 
-                                            + table 
-                                            + " where uid='" 
-                                            + username + 
-                                            "'"
-                            )
+        cursorobj.execute("select * from "
+                          + table
+                          + " where uid='"
+                          + username +
+                          "'"
+                          )
     )
-    students_dict={}
+    students_dict = {}
     for _ in students_list:
         if(_[0] not in students_dict):
-            students_dict[_[0]]=_[1]
+            students_dict[_[0]] = _[1]
     print(students_dict)
-    return jsonify(students_dict),RS200
+    return jsonify(students_dict), RS200
+
+
 # <---------------------------------Get all internships or scholarships of a student applied or an employee posted----------------------->
 '''
 Api to get all internships or scholarships of a student applied or an employee posted
@@ -1035,60 +1047,64 @@ def get_internships_scholarships():
     usertype = request.args.get("usertype")
     if username == "":
         return jsonify({}), RS400
-    if(usertype=="student"):
-        table="applied_for"
+    if(usertype == "student"):
+        table = "applied_for"
         print("select * from " + table + " where userid='" + username + "'")
         students_list = list(
-            cursorobj.execute("select * from " 
-                                                + table 
-                                                + " where userid='" 
-                                                + username + 
-                                                "'"
-                                )
+            cursorobj.execute("select * from "
+                              + table
+                              + " where userid='"
+                              + username +
+                              "'"
+                              )
         )
-        students_dict={}
+        students_dict = {}
         for _ in students_list:
-            if(_[2][0]=='i'):
+            if(_[2][0] == 'i'):
                 if(_[2] not in students_dict):
-                    students_dict[_[2]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=internship").json()
-            elif(_[2][0]=='s'):
+                    students_dict[_[2]] = requests.get(
+                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=internship").json()
+            elif(_[2][0] == 's'):
                 if(_[2] not in students_dict):
-                    students_dict[_[2]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
+                    students_dict[_[2]] = requests.get(
+                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
             else:
-                return jsonify({}),RS200    
+                return jsonify({}), RS200
         # print(students_dict)
-        return jsonify(students_dict),RS200
-    if(usertype=="employee"):
+        return jsonify(students_dict), RS200
+    if(usertype == "employee"):
         # print("select * from " + table + " where emp_name='" + username + "'")
         internscholarship_list = list(
-            cursorobj.execute("select * from " 
-                                                + "internship" 
-                                                + " where emp_name='" 
-                                                + username + 
-                                                "'"
-                                )
+            cursorobj.execute("select * from "
+                              + "internship"
+                              + " where emp_name='"
+                              + username +
+                              "'"
+                              )
         )
         internscholarship_list.extend(list(
-            cursorobj.execute("select * from " 
-                                                + "scholarship" 
-                                                + " where provider='" 
-                                                + username + 
-                                                "'"
-                                )
-            )
+            cursorobj.execute("select * from "
+                              + "scholarship"
+                              + " where provider='"
+                              + username +
+                              "'"
+                              )
         )
-        print(internscholarship_list,"HIIIIIIIIIIIIIIIIIIIIII")
-        internscholarship_dict={}
+        )
+        print(internscholarship_list, "HIIIIIIIIIIIIIIIIIIIIII")
+        internscholarship_dict = {}
         for _ in internscholarship_list:
-            if(_[0][0]=="s"):
-                type="scholarship"
-            elif(_[0][0]=="i"):
-                type="internship"
+            if(_[0][0] == "s"):
+                type = "scholarship"
+            elif(_[0][0] == "i"):
+                type = "internship"
             else:
-                return jsonify({}),RS500
+                return jsonify({}), RS500
             if(_[0] not in internscholarship_dict):
-                internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
-    return (internscholarship_dict),RS200
+                internscholarship_dict[_[0]] = requests.get(
+                    "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+    return (internscholarship_dict), RS200
+
 
 # Tell me what all data should be sent back
 # <---------------------------------Delete the applications from applied_for table if the application is deleted by the student---------------->
@@ -1108,19 +1124,21 @@ def delapplied():
         return jsonify({}), RS405
     name = request.args.get("userid")
     uid = request.args.get("uid")
-    table="applied_for"
+    table = "applied_for"
     l = check_user_exists(table, name, uid)
     print(l)
     if len(l) != 0:
         con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
-        cursorobj.execute("delete from " + table + " where userid='" + name + "' and uid='"+uid+"'")
+        cursorobj.execute("delete from " + table +
+                          " where userid='" + name + "' and uid='"+uid+"'")
         con.commit()
         return jsonify({}), RS200
     else:
         return jsonify({}), RS400
 
-#<-----------------------------------Get list of all available internships or scholarships------------------------------->
+
+# <-----------------------------------Get list of all available internships or scholarships------------------------------->
 '''
 Api to call list of all available internships and scholarships
 url:/api/v1/all_internship_scholarship
@@ -1135,21 +1153,23 @@ def all_internships_scholarships():
     scholarship_list = list(
         cursorobj.execute("select * from scholarship")
     )
-    internship_list=list(
+    internship_list = list(
         cursorobj.execute("select * from internship")
     )
     scholarship_list.extend(internship_list)
-    internscholarship_dict={}
+    internscholarship_dict = {}
     for _ in scholarship_list:
-        if(_[0][0]=="s"):
-            type="scholarship"
-        elif(_[0][0]=="i"):
-            type="internship"
+        if(_[0][0] == "s"):
+            type = "scholarship"
+        elif(_[0][0] == "i"):
+            type = "internship"
         else:
-            return jsonify({}),RS500
+            return jsonify({}), RS500
         if(_[0] not in internscholarship_dict):
-            internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
-    return (internscholarship_dict),RS200
+            internscholarship_dict[_[0]] = requests.get(
+                "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+    return (internscholarship_dict), RS200
+
 
 
 #<-----------------------------------Get the probability acceptance rate for internships only------------------------------->
