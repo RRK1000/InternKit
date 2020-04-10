@@ -596,8 +596,8 @@ body:
 	"college":"Current college",
 	"branch":"branch you are studying",
 	"snetwork":"git-github.com;link-linkeldin.com",           # different links separated by ; and, link and title separated by -			# not mandatory field 
-	"skills":"python-5;java-6;ml-9",                          # it should be in this format only											# not mandatory field 
-	"pdescription":"ProjectTitle1#projectdescription;ProjectTitle2#projectdescription;ProjectTitle3#projectdescription",      # projects separated by ; and , title description separated by #				# not mandatory field 
+	"skills":"python-5\njava-6\nmachhinelearning-9",                          # it should be in this format only											# not mandatory field 
+	"pdescription":"ProjectTitle1\nprojectdescription\nProjectTitle2\nprojectdescription\nProjectTitle3\nprojectdescription",      # projects separated by ; and , title description separated by #				# not mandatory field 
 	"usertype":"student" 
 }
 
