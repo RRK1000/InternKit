@@ -1,0 +1,10 @@
+Python-9
+Machine Learning-8
+Artificial Intelligence-8
+Web Development-8
+Backend Development-6
+Mobile Developer-5
+Django-8
+C-8
+Javascript-9
+ 
