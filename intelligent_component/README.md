@@ -1,4 +1,4 @@
-## Text Similarity Using Siamese Deep Neural Network
+## Text Similarity Using Siamese Deep Neural Network and WordCloud
 
 Siamese neural network is a class of **neural network architectures that contain two or more** **identical** **subnetworks**. *identical* here means they have the same configuration with the same parameters 
 and weights.This is accompanied with **word cloud and word frquencies obtained from it**
