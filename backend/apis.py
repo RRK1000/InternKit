@@ -1,7 +1,9 @@
 from flask import Flask, render_template, jsonify, request, abort
-
+import sys
+sys.path.insert(1, 'intelligent_component/')
+import my_probability_model
+#import checking
 app = Flask(__name__)
-
 import sqlite3
 import requests
 import random
@@ -35,7 +37,7 @@ def checksha(string):
 
 
 def getmaxid(table):
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     l = list(cursorobj.execute("select * from " + table))
     if table == "scholarship":
@@ -49,7 +51,7 @@ def getmaxid(table):
 
 
 def check_user_exists(table, userid, uid):
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "scholarship" or table == "internship":
         l = list(
@@ -150,7 +152,7 @@ def signup():
     print(l)
     if len(l) != 0:
         return jsonify({}), RS400
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "student":
         sstr = (
@@ -230,7 +232,7 @@ def deluid():
     l = check_user_exists(table, name, "")
     print(l)
     if len(l) != 0:
-        con = sqlite3.connect("scokit.db")
+        con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
         if table == "student" or table == "emp_login":
             cursorobj.execute("delete from " + table + " where userid='" + name + "'")
@@ -368,7 +370,7 @@ def editdetails():
             print("Hiiiiiiiii")
             return jsonify({}), RS400
         print(sstr)
-        con = sqlite3.connect("scokit.db")
+        con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
         cursorobj.execute(sstr)
         con.commit()
@@ -441,7 +443,7 @@ def editpassword():
                 + "'"
             )
             print(sstr)
-            con = sqlite3.connect("scokit.db")
+            con = sqlite3.connect("backend/scokit.db")
             cursorobj = con.cursor()
             cursorobj.execute(sstr)
             con.commit()
@@ -655,7 +657,7 @@ def profile():
     print(l)
     if len(l) != 0:
         return jsonify({}), RS400
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "s_profile":
         if not ("education" in req and "college" in req and "branch" in req):
@@ -819,7 +821,7 @@ def add_internship_scholarship():
     print(l)
     if len(l) != 0:
         return jsonify({}), RS400
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "scholarship":
         if req["name"] == "":
@@ -911,7 +913,8 @@ body:
 	"username" : "vishnu or user id of the student",
 	"apl_dat" : "send Data however you want but in a string",
 	"uid" : "uid of the internship or scholarship",
-	"usertype" : scholarship"
+	"usertype" : scholarship",
+    "token":"token:
 }
 Restrictions:
 username--> any userid of the students table
@@ -929,6 +932,8 @@ def apply():
     if not ("username" in req and "apl_dat" in req and "uid" in req):
         return jsonify({}), RS400
     username = req["username"]
+    if (not checkJwtWithUser(req["token"], req["username"])):
+        return jsonify({}), RS401
     uid = req["uid"]
     usertype = req["usertype"]
     table = "applied_for"
@@ -949,7 +954,7 @@ def apply():
     if len(l) != 0 or len(l1) == 0:
         print(len(l), len(l1))
         return jsonify({}), RS400
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     sstr = (
         "insert into "
@@ -992,7 +997,7 @@ def get_students():
     if username == "":
         return jsonify({}), RS400
     table="applied_for"
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     print("select * from " + table + " where uid='" + username + "'")
     students_list = list(
@@ -1021,7 +1026,7 @@ usertype--> student or employee
 '''
 @app.route("/api/v1/internships_scholarships_posted_applied", methods=["GET"])
 def get_internships_scholarships():
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     req = request.get_json()
     if request.method != "GET":
@@ -1107,7 +1112,7 @@ def delapplied():
     l = check_user_exists(table, name, uid)
     print(l)
     if len(l) != 0:
-        con = sqlite3.connect("scokit.db")
+        con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
         cursorobj.execute("delete from " + table + " where userid='" + name + "' and uid='"+uid+"'")
         con.commit()
@@ -1124,7 +1129,7 @@ url:/api/v1/all_internship_scholarship
 def all_internships_scholarships():
     if request.method != "GET":
         return jsonify({}), RS405
-    con = sqlite3.connect("scokit.db")
+    con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     # print("select * from " + table + " where uid='" + username + "'")
     scholarship_list = list(
@@ -1146,6 +1151,45 @@ def all_internships_scholarships():
             internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
     return (internscholarship_dict),RS200
 
+
+#<-----------------------------------Get the probability acceptance rate for internships only------------------------------->
+'''
+Api to call list of all available internships and scholarships
+url:/api/v1/internship_probability_acceptance?userid=vishnu&uid=i_0
+'''
+@app.route("/api/v1/internship_probability_acceptance", methods=["GET"])
+def internship_probability_acceptance():
+    req = request.get_json()
+    if request.method != "GET":
+        return jsonify({}), RS405
+    userid = request.args.get("userid")
+    uid = request.args.get("uid")
+    if userid == "" or uid == "":
+        return jsonify({}), RS400
+    if uid[0]!="i":
+        return jsonify({}),RS400
+    l=check_user_exists("student",userid,'')
+    l1=check_user_exists("internship",uid,'')
+    if(
+        len(l)==0 or len(l1)==0
+        ):
+        return jsonify({}),RS400
+
+    internship_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(uid)+"&usertype=internship").json()
+    student_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(userid)+"&usertype=student").json()
+    if(
+        str(internship_details["description"])==''
+                                                    or str(student_details["pdescription"])==''
+                                                    or str(student_details["skills"])==''):
+        return jsonify({}),Rs400
+
+    
+    probability_acceptance=my_probability_model.get_probability(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
+    return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
+    #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
+    #return jsonify({"prob":str(checking.hello())}),RS200
+    
+    
 if __name__ == "__main__":
     app.debug = True
     # app.bind(9000)
