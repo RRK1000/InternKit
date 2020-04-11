@@ -7,8 +7,8 @@ class Logout extends React.Component {
     this.deleteToken = this.deleteToken.bind(this);
   }
   deleteToken() {
-    console.log("HERE");
     localStorage.removeItem("token");
+    localStorage.removeItem("profile");
     return <Redirect to="/" />;
   }
   render() {

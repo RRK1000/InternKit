@@ -201,7 +201,11 @@ def signup():
     print(sstr)
     cursorobj.execute(sstr)
     con.commit()
-    return jsonify({}), RS201
+    return (
+            jwt.encode({"nonce": str(uuid4()), "username": username},
+                       jwtSecret, algorithm="HS256"),
+            RS201,
+        )
 
 
 # <--------------Delete User----------------->

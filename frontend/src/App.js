@@ -6,6 +6,7 @@ import SignIn from "./Components/SignInPage";
 import SignUp from "./Components/SignUpPage";
 import Profile from "./Components/ProfilePage";
 import Logout from "./Components/Logout";
+import AddProfile from "./Components/AddProfilePage";
 
 export default function App() {
   return (
@@ -20,9 +21,13 @@ export default function App() {
 
           <Route path="/signup" component={SignUp} />
 
+          <Route path="/addprofile" component={AddProfile} />
+          
           <Route path="/profile" component={Profile} />
-
+                    
           <Route path="/logout" component={Logout} />
+
+
         </Switch>
       </div>
     </Router>
