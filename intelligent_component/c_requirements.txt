@@ -1,0 +1,5 @@
+Microsoft Research
+Job Title: Software Developer
+Requirements: A person well established in python and has a very good knowledge on python libraries using flask and other backend techniques.
+Must be well versed in javascript and React for frontend Development or Web Development.React is a must for this company.The person must be good in machine learning and artificial intelligence with various machine learning algorithms to be known in for many cases.
+Must be good at problem solving skills and full fledged openstack developer. Person having knowledge on Django and databses like mysql or MongoDB are also considered. 

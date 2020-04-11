@@ -1151,6 +1151,7 @@ def all_internships_scholarships():
             internscholarship_dict[_[0]]=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
     return (internscholarship_dict),RS200
 
+
 #<-----------------------------------Get the probability acceptance rate for internships only------------------------------->
 '''
 Api to call list of all available internships and scholarships
@@ -1187,7 +1188,8 @@ def internship_probability_acceptance():
     return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
     #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
     #return jsonify({"prob":str(checking.hello())}),RS200
-
+    
+    
 if __name__ == "__main__":
     app.debug = True
     # app.bind(9000)

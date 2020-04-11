@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+const isLoggedIn = require("../../util/auth").isLoggedIn;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const classes = useStyles();
-  const isLoggedIn = false;
 
   const loggedInComponent = (
     <List component="nav">
@@ -79,7 +79,7 @@ export default function Header() {
             InternKit
           </Typography>
 
-          {isLoggedIn ? loggedInComponent : loggedOutComponent}
+          {isLoggedIn() ? loggedInComponent : loggedOutComponent}
         </Toolbar>
       </AppBar>
     </div>

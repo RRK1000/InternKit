@@ -7,6 +7,8 @@ import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
+const setToken = require("../../util/auth").setToken;
+
 const useStyles = makeStyles(theme => ({
   root: {
     "& .MuiTextField-root": {
@@ -25,8 +27,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft:theme.spacing(1)
   }
 }));
+
 export default function SignIn() {
   const classes = useStyles();
+  const doLogin = () => {
+    // make API call, and update call setToken on success
+    setToken("SampleToken");
+    
+  }
   return (
     <Container maxWidth="sm">
       <Typography className={classes.heading} variant="h4">
@@ -64,6 +72,7 @@ export default function SignIn() {
               className={classes.button}
               variant="contained"
               color="primary"
+              onClick={doLogin()}
             >
               Login
             </Button>
