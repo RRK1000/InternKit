@@ -33,4 +33,4 @@ requests == 2.22.0
 # InternKit/intelligent_component/my_probability_model.py: 2
 wordcloud == 1.6.0
 
-tensorflow
+tensorflow == 1.13.1
