@@ -1183,7 +1183,11 @@ def internship_probability_acceptance():
                                                     or str(student_details["skills"])==''):
         return jsonify({}),Rs400
 
-    
+    # c_dataset = open("intelligent_component/c_requirements.txt", "r").read().lower()
+    # p_dataset= open("intelligent_component/Projects.txt","r").read().lower()
+    # skills_dataset=open("intelligent_component/skills.txt","r").readlines()
+    # probability_acceptance=my_probability_model.get_probability(c_dataset,p_dataset,skills_dataset)
+
     probability_acceptance=my_probability_model.get_probability(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
     return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
     #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
