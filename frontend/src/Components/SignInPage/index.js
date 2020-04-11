@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect } from 'react-router-dom';
-import axios from "axios";
+// import axios from "axios";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -43,22 +43,30 @@ class SignIn extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
   doLogin() {
-    const headers = {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    };
     const data = this.state;
     console.log(data);
-    axios
-      .post("http://127.0.0.1:5000/api/v1/login", data, headers)
-      .then((res) => {
-        console.log(res.data);
-        setToken(res.data);
+    fetch('http://127.0.0.1:5000/api/v1/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+        setToken(data.token);
+        this.forceUpdate()
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert(error);
       });
   }
   render() {
     const { classes } = this.props;
-    if(isLoggedIn()) return <Redirect to='/'  />
+    if (isLoggedIn()) return <Redirect to='/' />
     return (
       <Container maxWidth="sm">
         <Typography className={classes.heading} variant="h4">
@@ -68,7 +76,7 @@ class SignIn extends React.Component {
           className={classes.root}
           noValidate
           autoComplete="off"
-          onSubmit={this.doLogin}
+        // onSubmit={this.doLogin}
         >
           <Grid container>
             <Grid container item>
@@ -110,7 +118,8 @@ class SignIn extends React.Component {
                 className={classes.button}
                 variant="contained"
                 color="primary"
-                type="submit"
+                // type="submit"
+                onClick={this.doLogin}
               >
                 Login
               </Button>

@@ -201,11 +201,9 @@ def signup():
     print(sstr)
     cursorobj.execute(sstr)
     con.commit()
-    return (
-            jwt.encode({"nonce": str(uuid4()), "username": username},
-                       jwtSecret, algorithm="HS256"),
-            RS201,
-        )
+    token = jwt.encode(
+            {"nonce": str(uuid4()), "username": username}, jwtSecret, algorithm="HS256").decode('utf-8')
+    return jsonify({"token": token}), RS201
 
 
 # <--------------Delete User----------------->
@@ -283,6 +281,7 @@ usertype--> student or employee
 @app.route("/api/v1/login", methods=["POST"])
 def login():
     req = request.get_json()
+    print(req)
     if request.method != "POST":
         return jsonify({}), RS405
     if not ("username" in req and "password" in req and "usertype" in req):
@@ -301,11 +300,9 @@ def login():
     l = check_user_exists(table, username, "")
     print(l)
     if len(l) != 0 and l[0][1] == password:
-        return (
-            jwt.encode({"nonce": str(uuid4()), "username": username},
-                       jwtSecret, algorithm="HS256"),
-            RS200,
-        )
+        token = jwt.encode(
+            {"nonce": str(uuid4()), "username": username}, jwtSecret, algorithm="HS256").decode('utf-8')
+        return jsonify({"token": token}), RS200
     else:
         return jsonify({}), RS400
 
