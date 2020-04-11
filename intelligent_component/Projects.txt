@@ -1,0 +1,6 @@
+Python Compiler using C
+we made a python compiler using C language in lex and yacc.
+Website for Interns
+Web Development for Interns using React and javascript for frontend and flask for backend 
+Machine learning model to find the probability status of a person
+Artificial Intelligence to classify stars and quasors
