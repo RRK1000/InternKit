@@ -24,7 +24,7 @@ in Windows
 
 `python3 probability.py`
 
-in linux
+in ubuntu
 ### Explanation
 
 In this branch the probability.py imports the my_probability_model.py which inturn imports the siamese network as well. So when calling in an api call it using the strings in the given format of the text files mentioned above.
