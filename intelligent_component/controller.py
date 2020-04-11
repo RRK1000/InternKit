@@ -11,7 +11,7 @@ import pandas as pd
 ########################################
 
 
-df = pd.read_csv('sample_data.csv')
+df = pd.read_csv('intelligent_component/sample_data.csv')
 
 sentences1 = list(df['sentences1'])
 sentences2 = list(df['sentences2'])
