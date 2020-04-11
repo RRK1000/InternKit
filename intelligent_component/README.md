@@ -1,4 +1,4 @@
-## Text Similarity Using Siamese Deep Neural Network
+## Text Similarity Using Siamese Deep Neural Network and WordCloud
 
 Siamese neural network is a class of **neural network architectures that contain two or more** **identical** **subnetworks**. *identical* here means they have the same configuration with the same parameters 
 and weights.This is accompanied with **word cloud and word frquencies obtained from it**
@@ -20,6 +20,11 @@ Send the data in api request's body according to the above mentioned files pleas
 
 `py -3 probability.py`
 
+in Windows
+
+`python3 probability.py`
+
+in linux
 ### Explanation
 
 In this branch the probability.py imports the my_probability_model.py which inturn imports the siamese network as well. So when calling in an api call it using the strings in the given format of the text files mentioned above.
