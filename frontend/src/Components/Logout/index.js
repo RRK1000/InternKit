@@ -1,19 +1,17 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
+import { useSetStoreValue } from 'react-context-hook';
 
-class Logout extends React.Component {
-  constructor(props) {
-    super(props);
-    this.deleteToken = this.deleteToken.bind(this);
-  }
-  deleteToken() {
+function Logout() {
+  const setToken = useSetStoreValue('isLoggedIn');
+
+  const deleteToken = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("profile");
+    setToken(false);
     return <Redirect to="/" />;
   }
-  render() {
-    return <div>{this.deleteToken()}</div>;
-  }
+  return <div>{deleteToken()}</div>;
 }
 
 export default Logout;

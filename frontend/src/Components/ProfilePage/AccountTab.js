@@ -37,7 +37,6 @@ export default function AccountTab() {
         <Grid container item>
           <TextField
             required
-            id="outlined-required"
             label="Name"
             defaultValue=""
             variant="outlined"
@@ -46,7 +45,6 @@ export default function AccountTab() {
         <Grid container item>
           <TextField
             required
-            id="outlined-required"
             label="Email Address"
             defaultValue=""
             variant="outlined"

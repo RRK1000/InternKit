@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { withStore } from 'react-context-hook';
 import Header from "./Components/Header";
 import Home from "./Components/HomePage";
 import SignIn from "./Components/SignInPage";
@@ -8,28 +9,37 @@ import Profile from "./Components/ProfilePage";
 import Logout from "./Components/Logout";
 import AddProfile from "./Components/AddProfilePage";
 
-export default function App() {
+const initialState = Object.assign({ isLoggedIn: false }, JSON.parse(localStorage.getItem('state'))); // Using localStorage to persist on reload
+const storeConfig = {
+  listener: state => {
+    console.log('state changed', state)
+    // persist state on reload
+    localStorage.setItem('state', JSON.stringify(state))
+  },
+  logging: process.env.NODE_ENV !== 'production'
+};
+
+function App() {
   return (
     <Router>
-      <div>
-        <Header />
+      <Header />
 
-        <Switch>
-          <Route exact path="/" component={Home} />
+      <Switch>
+        <Route exact path="/" component={Home} />
 
-          <Route path="/signin" component={SignIn} />
+        <Route path="/signin" component={SignIn} />
 
-          <Route path="/signup" component={SignUp} />
+        <Route path="/signup" component={SignUp} />
 
-          <Route path="/addprofile" component={AddProfile} />
-          
-          <Route path="/profile" component={Profile} />
-                    
-          <Route path="/logout" component={Logout} />
+        <Route path="/addprofile" component={AddProfile} />
 
+        <Route path="/profile" component={Profile} />
 
-        </Switch>
-      </div>
+        <Route path="/logout" component={Logout} />
+
+      </Switch>
     </Router>
   );
 }
+
+export default withStore(App, initialState, storeConfig);
