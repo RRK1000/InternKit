@@ -54,7 +54,14 @@ function SignIn(props) {
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response)
+        if (response.ok)
+          return response.json()
+        else
+          throw Error(response.status + " " + response.statusText)
+      }
+      )
       .then((data) => {
         console.log('Success:', data);
         setIsLoggedIn(data.token);
