@@ -132,32 +132,31 @@ usertype--> student or employee
 def signup():
     req = request.get_json()
     if request.method != "PUT":
-        return jsonify({}), RS405
+        return jsonify({"message": "Method not allowed"}), RS405
     if not (
         "username" in req and "password" in req and "name" in req and "usertype" in req
     ):
-        print("Hello\n")
-        return jsonify({}), RS400
+        return jsonify({"message": "Missing arguments"}), RS400
     username = req["username"]
     name = req["name"]
     usertype = req["usertype"]
     password = req["password"]
     if len(password) < 7:
-        return jsonify({}), RS400
+        return jsonify({"message": "Password needs to be at least 7 characters long"}), RS400
     if usertype == "student":
         table = "student"
-    elif usertype == "employee":
+    elif usertype == "employee":    
         table = "emp_login"
     else:
-        return jsonify({}), RS201
+        return jsonify({"message": "Success"}), RS201
     if username == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "Username empty"}), RS400
     if name == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "Name empty"}), RS400
     l = check_user_exists(table, username, "")
     print(l)
     if len(l) != 0:
-        return jsonify({}), RS400
+        return jsonify({"message": "User already exists"}), RS400
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "student":
@@ -197,7 +196,7 @@ def signup():
             + ")"
         )
     else:
-        return jsonify({}), RS400
+        return jsonify({"message": "Usertype invalid"}), RS400
     print(sstr)
     cursorobj.execute(sstr)
     con.commit()
