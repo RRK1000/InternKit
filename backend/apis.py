@@ -14,6 +14,7 @@ import my_probability_model
 app = Flask(__name__)
 CORS(app)
 
+RS500 = 500
 RS400 = 400
 RS401 = 401
 RS405 = 405

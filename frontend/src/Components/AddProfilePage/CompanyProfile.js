@@ -1,15 +1,15 @@
-import React from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
+import { useGetAndSet } from "react-context-hook";
+
 const isLoggedIn = require("../../util/auth").isLoggedIn;
 
-
-const useStyles = (theme) => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         "& .MuiTextField-root": {
             margin: theme.spacing(1),
@@ -23,187 +23,226 @@ const useStyles = (theme) => ({
     button: {
         marginLeft: theme.spacing(1),
         marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(3),
     },
     caption: {
         marginTop: theme.spacing(4),
         marginLeft: theme.spacing(1),
     },
-});
+    skills: {
+        width: "20ch",
+    },
+}));
 
-class AddProfile extends React.Component {
-    constructor(props) {
-        super(props);
-        // To Do, pass username and usertype as props
-        this.state = {
-            username: "",
-            dob: "",
-            email: "",
-            phone: "",
-            grade12: "",
-            gpa: "",
-            college: "",
-            branch: "",
-            snetwork: "",
-            skills: "",
-            pdescription: "",
-            usertype: "",
-        };
-        this.doLogin = this.doLogin.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
+export default function StudentProfile() {
+    const classes = useStyles();
+    const [username, setUsername] = useState("");
+    const [dob, setDob] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [cname, setCname] = useState("");
+    const [post, setPost] = useState("");
+    const [github, setGithub] = useState("");
+    const [linkedIn, setLinkedIn] = useState("");
+    const [cdescription, setCdescription] = useState("");
 
-    handleChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-    }
-    doLogin() {
-        const headers = {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        };
-        const data = this.state;
-        console.log(data);
-        // axios
-        //     .post("http://localhost:5000/api/v1/addprofile", data, headers)
-        //     .then((res) => {
-        //         console.log(res.data);
-        //         setToken(res.data);
-        //     });
-    }
-    render() {
-        const { classes } = this.props;
-        return (
-            <Container maxWidth="sm">
-                <Typography className={classes.heading} variant="h2">
-                    Add Profile
-                </Typography>
-                <form
-                    className={classes.root}
-                    noValidate
-                    autoComplete="off"
-                    onSubmit={this.doLogin}
-                >
-                    <Grid container>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="Username"
-                                name="username"
-                                value={this.username}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
+    const [isLoggedIn, setIsLoggedIn] = useGetAndSet("isLoggedIn");
+    const [usertype, setUserType] = useGetAndSet("usertype");
 
-                        {/* <Grid container item>
-                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <KeyboardDatePicker
-                                    disableToolbar
-                                    variant="inline"
-                                    format="MM/dd/yyyy"
-                                    margin="normal"
-                                    id="date-picker-inline"
-                                    label="Date picker inline"
-                                    value={this.dob}
-                                    onChange={this.handleChange}
-                                    KeyboardButtonProps={{
-                                        "aria-label": "change date",
-                                    }}
-                                />
-                            </MuiPickersUtilsProvider>
-                        </Grid> */}
+    const handleChange = (e) => {
+        if (e.target.name === "username") setUsername(e.target.value);
+        else if (e.target.name === "dob") setDob(e.target.value);
+        else if (e.target.name === "email") setEmail(e.target.value);
+        else if (e.target.name === "phone") setPhone(e.target.value);
+        else if (e.target.name === "cname") setCname(e.target.value);
+        else if (e.target.name === "post") setPost(e.target.value);
+        else if (e.target.name === "github") setGithub(e.target.value);
+        else if (e.target.name === "linkedIn") setLinkedIn(e.target.value);
+        else if (e.target.name === "cdescription")
+            setCdescription(e.target.value);
+    };
 
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="Email"
-                                name="email"
-                                value={this.email}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="Phone"
-                                name="phone"
-                                value={this.phone}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="College Name"
-                                name="college"
-                                value={this.college}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="Branch"
-                                name="branch"
-                                value={this.branch}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-
-                        <Grid container item>
-                            <Typography
-                                className={classes.caption}
-                                variant="h4"
-                            >
-                                Education Details
-                            </Typography>
-                        </Grid>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="12th grade(%)"
-                                name="grade12"
-                                value={this.grade12}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="College GPA"
-                                name="gpa"
-                                value={this.gpa}
-                                variant="outlined"
-                                onChange={this.handleChange}
-                            />
-                        </Grid>
-
-
-                        <Grid container item>
-                            <Button
-                                className={classes.button}
-                                variant="contained"
-                                color="primary"
-                                type="submit"
-                            >
-                                Create Account
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Container>
+    const createAcc = () => {
+        const data = Object.assign(
+            {},
+            {
+                username,
+                dob,
+                token: isLoggedIn,
+                email,
+                phone,
+                cname,
+                snetwork: github + ";" + linkedIn,
+                cdescription,
+                usertype,
+            }
         );
-    }
+        console.log(data);
+        fetch("http://127.0.0.1:5000/api/v1/addprofile", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                console.log(response);
+                if (response.ok) return response.json();
+                else throw Error(response.status + " " + response.statusText);
+            })
+            .then((data) => {
+                console.log("Success:", data);
+                localStorage.setItem("profile", true);
+                //re-route to home page
+                window.forceUpdate();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert(error);
+            });
+    };
+
+    return (
+        <Container maxWidth="sm">
+            <Typography className={classes.heading} variant="h3">
+                Add Profile
+            </Typography>
+            <form
+                className={classes.root}
+                noValidate
+                autoComplete="off"
+                // onSubmit={createAcc}
+            >
+                <Grid container>
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Username"
+                            name="username"
+                            value={username}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Date of Birth (DD/MM/YYYY)"
+                            name="dob"
+                            value={dob}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Email"
+                            name="email"
+                            value={email}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Phone"
+                            name="phone"
+                            value={phone}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <Typography className={classes.caption} variant="h4">
+                            Company Details
+                        </Typography>
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Company Name"
+                            name="cname"
+                            value={cname}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            id="outlined1"
+                            className={classes.skills}
+                            label="Company Description"
+                            name="cdescription"
+                            value={cdescription}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Post"
+                            name="post"
+                            value={post}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <Typography className={classes.caption} variant="h4">
+                            Network Details
+                        </Typography>
+                    </Grid>
+                    <Grid container item>
+                        <TextField
+                            id="outlined1"
+                            label="Github"
+                            name="github"
+                            value={github}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid container item>
+                        <TextField
+                            id="outlined2"
+                            label="LinkedIn"
+                            name="linkedIn"
+                            value={linkedIn}
+                            variant="outlined"
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="primary"
+                            //   type="submit"
+                            onClick={createAcc}
+                        >
+                            Create Account
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+        </Container>
+    );
 }
-export default withStyles(useStyles)(AddProfile);

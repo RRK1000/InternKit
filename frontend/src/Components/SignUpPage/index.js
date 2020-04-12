@@ -43,10 +43,10 @@ const useStyles = (theme) => ({
 
 function SignUp(props) {
     const [isLoggedIn, setIsLoggedIn] = useGetAndSet('isLoggedIn');
+    const [usertype, setUserType] = useGetAndSet('usertype');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const [usertype, setUserType] = useState('student');
 
     const onSubmit = () => {
         const headers = {
@@ -61,6 +61,7 @@ function SignUp(props) {
                 console.log(res.data);
                 setToken(res.data.token);
                 setIsLoggedIn(res.data.token)
+                setUserType(usertype);
                 localStorage.setItem("profile", false);
             })
             .catch((err) => {
@@ -151,7 +152,7 @@ function SignUp(props) {
                                     label="Student"
                                 />
                                 <FormControlLabel
-                                    value="company"
+                                    value="employee"
                                     control={<Radio color="primary" />}
                                     label="Company"
                                 />

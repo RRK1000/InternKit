@@ -33,7 +33,8 @@ const useStyles = (theme) => ({
 function SignIn(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const usertype = "student";
+  const [usertype, setUserType] = useGetAndSet('usertype');
+  // const usertype = "student";
   const [isLoggedIn, setIsLoggedIn] = useGetAndSet('isLoggedIn');
 
   const handleChange = e => {
@@ -65,6 +66,7 @@ function SignIn(props) {
       .then((data) => {
         console.log('Success:', data);
         setIsLoggedIn(data.token);
+        setUserType(usertype);
         setToken(data.token); // maintained so other things don't break. 
       })
       .catch((error) => {
