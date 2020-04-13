@@ -7,7 +7,6 @@ function Logout() {
 
   const deleteToken = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("profile");
     setToken(false);
     return <Redirect to="/" />;
   }
