@@ -50,8 +50,9 @@ export default function StudentProfile() {
     const [skills, setSkills] = useState("");
     //   const [pdescription, setPdescription] = useState("");
 
-    const [isLoggedIn, setIsLoggedIn] = useGetAndSet("isLoggedIn");
-    const [usertype, setUserType] = useGetAndSet('usertype');
+    const [isLoggedIn] = useGetAndSet("isLoggedIn");
+    const [usertype] = useGetAndSet('usertype');
+    const [hasProfile, setHasProfile] = useGetAndSet('hasProfile');
 
     const handleChange = (e) => {
         if (e.target.name === "username") setUsername(e.target.value);
@@ -103,7 +104,7 @@ export default function StudentProfile() {
             })
             .then((data) => {
                 console.log("Success:", data);
-                localStorage.setItem("profile", true);
+                setHasProfile(true);
                 //re-route to home page
             })
             .catch((error) => {
@@ -111,7 +112,7 @@ export default function StudentProfile() {
                 alert(error);
             });
     };
-    if(localStorage.getItem("profile") === "true") return <Redirect to='/' />;
+    if(hasProfile) return <Redirect to='/' />;
 
     return (
         <Container maxWidth="sm">

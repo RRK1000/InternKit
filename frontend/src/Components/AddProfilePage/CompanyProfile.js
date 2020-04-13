@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -46,8 +47,9 @@ export default function StudentProfile() {
     const [linkedIn, setLinkedIn] = useState("");
     const [cdescription, setCdescription] = useState("");
 
-    const [isLoggedIn, setIsLoggedIn] = useGetAndSet("isLoggedIn");
-    const [usertype, setUserType] = useGetAndSet("usertype");
+    const [isLoggedIn] = useGetAndSet("isLoggedIn");
+    const [usertype] = useGetAndSet("usertype");
+    const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
 
     const handleChange = (e) => {
         if (e.target.name === "username") setUsername(e.target.value);
@@ -93,16 +95,15 @@ export default function StudentProfile() {
             })
             .then((data) => {
                 console.log("Success:", data);
-                localStorage.setItem("profile", true);
-                //re-route to home page
-                window.forceUpdate();
+                setHasProfile(true);
             })
             .catch((error) => {
                 console.error("Error:", error);
                 alert(error);
             });
     };
-
+    console.log("Has a profile?",hasProfile);
+    if (hasProfile) return <Redirect to="/" />;
     return (
         <Container maxWidth="sm">
             <Typography className={classes.heading} variant="h3">

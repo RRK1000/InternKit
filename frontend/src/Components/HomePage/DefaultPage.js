@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
+import { useGetAndSet } from 'react-context-hook';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,16 +14,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DefaultPage() {
   const classes = useStyles();
+  const [usertype, setUserType] = useGetAndSet('usertype');
 
   return (
     <Container className={classes.root} maxWidth="lg">
       <ButtonGroup color="primary" aria-label="outlined primary button group">
-        <Button>
-          <Link href="/signup" color="primary">
+        <Button onClick={()=>{setUserType("employee");}}>
+          <Link href="/signin" color="primary">
             Company Login
           </Link>{" "}
         </Button>
-        <Button>
+        <Button onClick={()=>{setUserType("student");}}>
           <Link href="/signin" color="primary">
             Student Login
           </Link>
