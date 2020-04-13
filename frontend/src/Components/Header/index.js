@@ -56,13 +56,7 @@ function Header(props) {
                         Home
                     </Link>
                 </ListItemText>
-
-                <ListItemText inset>
-                    <Link component={RouterLink} to="/signin" color="inherit">
-                        Sign In
-                    </Link>
-                </ListItemText>
-
+                
                 <ListItemText inset>
                     <Link component={RouterLink} to="/signup" color="inherit">
                         Register
