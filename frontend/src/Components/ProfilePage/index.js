@@ -95,11 +95,7 @@ export default function Profile() {
           <Tab label="Skills" {...a11yProps(3)} />
         </Tabs>
       </AppBar>
-      {/* <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      > */}
+      
       <TabPanel value={value} index={0} dir={theme.direction}>
         <AccountTab />
       </TabPanel>
@@ -112,7 +108,6 @@ export default function Profile() {
       <TabPanel value={value} index={3} dir={theme.direction}>
         Skills
       </TabPanel>
-      {/* </SwipeableViews> */}
     </Container>
   );
 }
