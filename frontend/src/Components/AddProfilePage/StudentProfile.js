@@ -64,7 +64,7 @@ export default function StudentProfile() {
     const token = useStoreValue("isLoggedIn");
     const username = useStoreValue("username");
     const usertype = useStoreValue("usertype");
-    const [isLoggedIn] = useGetAndSet("isLoggedIn");
+
     const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
 
     const handleChange = (e) => {
@@ -218,7 +218,7 @@ export default function StudentProfile() {
         }
 
         var projList = "";
-        for (var i = 0; i < project.val.length; i++) {
+        for (i = 0; i < project.val.length; i++) {
             projList += project.val[i] + "\n" + desc.val[i] + "\n";
         }
         const data = Object.assign(
@@ -226,7 +226,7 @@ export default function StudentProfile() {
             {
                 username,
                 dob,
-                token: isLoggedIn,
+                token,
                 email,
                 phone,
                 education: grade12 + ";" + gpa,

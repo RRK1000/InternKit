@@ -1201,7 +1201,7 @@ def internship_probability_acceptance():
         str(internship_details["description"])==''
                                                     or str(student_details["pdescription"])==''
                                                     or str(student_details["skills"])==''):
-        return jsonify({}),Rs400
+        return jsonify({}),RS400
 
     # c_dataset = open("intelligent_component/c_requirements.txt", "r").read().lower()
     # p_dataset= open("intelligent_component/Projects.txt","r").read().lower()
