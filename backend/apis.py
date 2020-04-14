@@ -283,9 +283,9 @@ def login():
     req = request.get_json()
     print(req)
     if request.method != "POST":
-        return jsonify({}), RS405
+        return jsonify({"message": "Method not allowed"}), RS405
     if not ("username" in req and "password" in req and "usertype" in req):
-        return jsonify({}), RS400
+        return jsonify({"message": "Missing parameters"}), RS400
     username = req["username"]
     usertype = req["usertype"]
     password = req["password"]
@@ -294,9 +294,9 @@ def login():
     elif usertype == "employee":
         table = "emp_login"
     else:
-        return jsonify({}), RS400
+        return jsonify({"message": "Invalid usertype"}), RS400
     if username == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "Invalid username"}), RS400
     l = check_user_exists(table, username, "")
     print(l)
     if len(l) != 0 and l[0][1] == password:
@@ -304,7 +304,7 @@ def login():
             {"nonce": str(uuid4()), "username": username}, jwtSecret, algorithm="HS256").decode('utf-8')
         return jsonify({"token": token}), RS200
     else:
-        return jsonify({}), RS400
+        return jsonify({"message": "Invalid credentials"}), RS400
 
 
 # <--------------------------------EDIT-------------------------->
