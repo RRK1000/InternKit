@@ -35,6 +35,5 @@ Hence the apis must be ran in the parent directory ***i.e. in InternKit director
 
 Note: You must be in the InternKit Directory
 - Install `requirements.txt`
-- `py -3 backend/apis.py`
-	in Windows\
-	`python3 backend/apis.py` in Ubuntu
+- `py -3 backend/apis.py` in Windows\
+  `python3 backend/apis.py` in Ubuntu
