@@ -922,7 +922,6 @@ url : /api/v1/apply
 body:
 {
 	"username" : "vishnu or user id of the student",
-	"apl_dat" : "send Data however you want but in a string",
 	"uid" : "uid of the internship or scholarship",
 	"usertype" : scholarship",
     "token":"token:
@@ -940,7 +939,7 @@ def apply():
     req = request.get_json()
     if request.method != "PUT":
         return jsonify({}), RS405
-    if not ("username" in req and "apl_dat" in req and "uid" in req):
+    if not ("username" in req and "uid" in req):
         return jsonify({}), RS400
     username = req["username"]
     if (not checkJwtWithUser(req["token"], req["username"])):
@@ -948,7 +947,7 @@ def apply():
     uid = req["uid"]
     usertype = req["usertype"]
     table = "applied_for"
-    apl_dat = req["apl_dat"]
+    apl_dat = ' '
     if usertype == "scholarship":
         type = "scholarship"
     elif usertype == "internship":
