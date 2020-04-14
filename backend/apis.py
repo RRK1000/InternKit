@@ -938,12 +938,12 @@ usetype--> scholarship or internship
 def apply():
     req = request.get_json()
     if request.method != "PUT":
-        return jsonify({}), RS405
+        return jsonify({"message": "Method not allowed"}), RS405
     if not ("username" in req and "uid" in req):
-        return jsonify({}), RS400
+        return jsonify({"message": "Missing params"}), RS400
     username = req["username"]
     if (not checkJwtWithUser(req["token"], req["username"])):
-        return jsonify({}), RS401
+        return jsonify({"message": "Bad token"}), RS401
     uid = req["uid"]
     usertype = req["usertype"]
     table = "applied_for"
@@ -953,17 +953,17 @@ def apply():
     elif usertype == "internship":
         type = "internship"
     else:
-        return jsonify({}), RS400
+        return jsonify({"message": "Invalid type"}), RS400
     if username == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "Missing username"}), RS400
     if uid == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "Missing uid"}), RS400
     l = check_user_exists(table, username, uid)
     l1 = check_user_exists(type, uid, "")
     print(l)
     if len(l) != 0 or len(l1) == 0:
         print(len(l), len(l1))
-        return jsonify({}), RS400
+        return jsonify({"message": "Already applied"}), RS200
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     sstr = (
