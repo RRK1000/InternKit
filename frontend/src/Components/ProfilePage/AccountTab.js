@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useGetAndSet } from "react-context-hook";
+import { useGetAndSet, useStoreValue } from "react-context-hook";
 
 const useStyles = makeStyles((theme) => ({
     form: {
@@ -31,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AccountTab() {
     const classes = useStyles();
-    const [username, setUsername] = useState("");
+    const username = useStoreValue("username");
+    
     const [currentPassword, setCurrentPassword] = useState("");
     const [password, setPassword] = useState("");
 
@@ -39,8 +39,7 @@ export default function AccountTab() {
     const [isLoggedIn] = useGetAndSet("isLoggedIn");
 
     const handleChange = (e) => {
-        if (e.target.name === "username") setUsername(e.target.value);
-        else if (e.target.name === "currentPassword")
+        if (e.target.name === "currentPassword")
             setCurrentPassword(e.target.value);
         else if (e.target.name === "password") setPassword(e.target.value);
     };
@@ -63,6 +62,7 @@ export default function AccountTab() {
                 console.log(response);
                 if (response.ok) {
                     alert("Successfully Changed Password.");
+                    window.location.reload();
                 } else throw Error(response.status + " " + response.statusText);
             })
             .catch((err) => {
@@ -74,17 +74,7 @@ export default function AccountTab() {
     return (
         <form className={classes.form} noValidate autoComplete="off">
             <Grid container>
-                <Grid container item>
-                    <TextField
-                        required
-                        name="username"
-                        label="Username"
-                        value={username}
-                        onChange={handleChange}
-                        variant="outlined"
-                    />
-                </Grid>
-
+                
                 {/* <Grid container item>
           <Typography className={classes.caption} variant="caption">
             We won't share your email with anyone else.

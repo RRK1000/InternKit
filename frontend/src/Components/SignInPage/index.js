@@ -36,16 +36,9 @@ function SignIn(props) {
     var token = null;
 
     const [usertype, setUserType] = useGetAndSet("usertype", "student");
-    const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
+    const [hasProfile, setHasProfile] = useGetAndSet("hasProfile", false);
     const [isLoggedIn, setIsLoggedIn] = useGetAndSet("isLoggedIn");
     const setAuthUsername = useSetStoreValue("username");
-
-    useEffect(() => setHasProfile(false), []);
-
-    const handleChange = (e) => {
-        if (e.target.name === "username") setUsername(e.target.value);
-        else if (e.target.name === "password") setPassword(e.target.value);
-    };
 
     const doLogin = () => {
         const data = Object.assign({}, { username, password, usertype });
@@ -83,12 +76,11 @@ function SignIn(props) {
                 setHasProfile(response.ok);
             })
             .then(() => {
-                console.log("HIII")
                 console.log(token)
                 setIsLoggedIn(token);
                 setUserType(usertype);
                 setAuthUsername(username);
-                setToken(data.token); // maintained so other things don't break.
+                setToken(token); // maintained so other things don't break.
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -110,7 +102,7 @@ function SignIn(props) {
                     className={classes.root}
                     noValidate
                     autoComplete="off"
-                    // onSubmit={this.doLogin}
+                // onSubmit={this.doLogin}
                 >
                     <Grid container>
                         <Grid container item>
@@ -121,7 +113,7 @@ function SignIn(props) {
                                 name="username"
                                 value={username}
                                 variant="outlined"
-                                onChange={handleChange}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </Grid>
 
@@ -135,7 +127,7 @@ function SignIn(props) {
                                 value={password}
                                 autoComplete="current-password"
                                 variant="outlined"
-                                onChange={handleChange}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                         </Grid>
 
