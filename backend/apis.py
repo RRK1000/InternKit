@@ -1021,7 +1021,8 @@ def get_students():
     students_dict = {}
     for _ in students_list:
         if(_[0] not in students_dict):
-            students_dict[_[0]] = _[1]
+            students_dict[_[0]] = requests.get(
+                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype=student").json()
     print(students_dict)
     return jsonify(students_dict), RS200
 
