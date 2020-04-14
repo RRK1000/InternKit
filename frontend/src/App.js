@@ -9,11 +9,17 @@ import Profile from "./Components/ProfilePage";
 import Logout from "./Components/Logout";
 import AddProfile from "./Components/AddProfilePage";
 
-const initialState = Object.assign({ isLoggedIn: false }, JSON.parse(localStorage.getItem('state'))); // Using localStorage to persist on reload
+const initialState = Object.assign(
+  {
+    isLoggedIn: false,
+    username: null
+  },
+  JSON.parse(localStorage.getItem('state'))); // Using localStorage to persist on reload
+
 const storeConfig = {
   listener: state => {
     console.log('state changed', state)
-    // persist state on reload
+    // persist state to localStorage
     localStorage.setItem('state', JSON.stringify(state))
   },
   logging: process.env.NODE_ENV !== 'production'

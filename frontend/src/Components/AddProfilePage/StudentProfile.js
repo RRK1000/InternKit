@@ -6,9 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useGetAndSet } from "react-context-hook";
-
-const isLoggedIn = require("../../util/auth").isLoggedIn;
+import { useGetAndSet, useStoreValue } from "react-context-hook";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function StudentProfile() {
     const classes = useStyles();
-    const [username, setUsername] = useState("");
     const [dob, setDob] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -50,13 +47,13 @@ export default function StudentProfile() {
     const [skills, setSkills] = useState("");
     //   const [pdescription, setPdescription] = useState("");
 
-    const [isLoggedIn] = useGetAndSet("isLoggedIn");
-    const [usertype] = useGetAndSet('usertype');
+    const token = useStoreValue("isLoggedIn");
+    const username = useStoreValue("username");
+    const usertype = useStoreValue('usertype');
     const [hasProfile, setHasProfile] = useGetAndSet('hasProfile');
 
     const handleChange = (e) => {
-        if (e.target.name === "username") setUsername(e.target.value);
-        else if (e.target.name === "dob") setDob(e.target.value);
+        if (e.target.name === "dob") setDob(e.target.value);
         else if (e.target.name === "email") setEmail(e.target.value);
         else if (e.target.name === "phone") setPhone(e.target.value);
         else if (e.target.name === "grade12") setGrade12(e.target.value);
@@ -75,7 +72,7 @@ export default function StudentProfile() {
             {
                 username,
                 dob,
-                token: isLoggedIn,
+                token,
                 email,
                 phone,
                 education: grade12 + ";" + gpa,
@@ -112,7 +109,7 @@ export default function StudentProfile() {
                 alert(error);
             });
     };
-    if(hasProfile) return <Redirect to='/' />;
+    if (hasProfile) return <Redirect to='/' />;
 
     return (
         <Container maxWidth="sm">
@@ -123,21 +120,9 @@ export default function StudentProfile() {
                 className={classes.root}
                 noValidate
                 autoComplete="off"
-                // onSubmit={createAcc}
+            // onSubmit={createAcc}
             >
                 <Grid container>
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Username"
-                            name="username"
-                            value={username}
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                    </Grid>
-
                     <Grid container item>
                         <TextField
                             required

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
-import { useGetAndSet } from "react-context-hook";
+import { useGetAndSet, useSetStoreValue } from "react-context-hook";
 
 const setToken = require("../../util/auth").setToken;
 
@@ -33,11 +33,14 @@ const useStyles = (theme) => ({
 function SignIn(props) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    var token = null;
 
-    const [usertype, setUserType] = useGetAndSet("usertype");
+    const [usertype, setUserType] = useGetAndSet("usertype", "student");
     const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
-    setHasProfile(false);
     const [isLoggedIn, setIsLoggedIn] = useGetAndSet("isLoggedIn");
+    const setAuthUsername = useSetStoreValue("username");
+
+    useEffect(() => setHasProfile(false), []);
 
     const handleChange = (e) => {
         if (e.target.name === "username") setUsername(e.target.value);
@@ -62,37 +65,30 @@ function SignIn(props) {
             })
             .then((data) => {
                 console.log("Success:", data);
-                setIsLoggedIn(data.token);
-                setUserType(usertype);
-                setToken(data.token); // maintained so other things don't break.
-                fetch(
-                    "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
-                        username +
-                        "&usertype=" +
-                        usertype,
+                token = data.token;
+                return fetch(
+                    "http://127.0.0.1:5000/api/v1/getdetails?" +
+                    new URLSearchParams({
+                        uid: username,
+                        usertype
+                    }),
                     {
                         method: "GET",
                         mode: "cors",
-                        // headers: {
-                        //     "Content-Type": "application/json",
-                        // },
                     }
-                )
-                    .then((response) => {
-                        console.log(response);
-                        if (response.ok) return response.json();
-                        else
-                            throw Error(
-                                response.status + " " + response.statusText
-                            );
-                    })
-                    .then((data) => {
-                        setHasProfile(true);
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                        setHasProfile(false);
-                    });
+                );
+            })
+            .then((response) => {
+                console.log(response);
+                setHasProfile(response.ok);
+            })
+            .then(() => {
+                console.log("HIII")
+                console.log(token)
+                setIsLoggedIn(token);
+                setUserType(usertype);
+                setAuthUsername(username);
+                setToken(data.token); // maintained so other things don't break.
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -100,8 +96,10 @@ function SignIn(props) {
             });
     };
     const { classes } = props;
-    if (hasProfile) return <Redirect to="addprofile" />;
-    if (isLoggedIn) return <Redirect to="/" />;
+    if (isLoggedIn)
+        if (hasProfile)
+            return <Redirect to="/" />;
+        else return <Redirect to="/addprofile" />;
     else
         return (
             <Container maxWidth="sm">
