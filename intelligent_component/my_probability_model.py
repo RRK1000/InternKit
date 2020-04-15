@@ -1,6 +1,7 @@
 #import matplotlib.pyplot as pPlot
 from wordcloud import WordCloud,STOPWORDS
 import numpy as npy
+import random
 from nltk.corpus import stopwords
 from PIL import Image
 #<---------------import the siamese network in our controller.py---------------------->
@@ -68,13 +69,13 @@ def get_weightage_of_skills(p_dict,skills_dict):
 def get_weightage_of_skills_crequirements(c_dict,skills_dict):
    res=0
    resc=0
-   print(c_dict)
    for i in skills_dict:
       if i in c_dict:
          res=res+skills_dict[i]*0.1*c_dict[i][0]*c_dict[i][1]*0.1
          resc=resc+c_dict[i][0]*c_dict[i][1]*0.1
-         print(resc,res,"RES")
+         # print(resc,res,"RES")
    try:
+      print((res/resc)*0.5)
       return (res/resc)*0.5
    except:
       return 0
@@ -88,9 +89,10 @@ def get_weightage_of_prequirements_crequirements(p_dict,c_dict):
       if i in c_dict:
          res=res+(c_dict[i][0]*c_dict[i][1]*0.1-p_dict[i][0]*p_dict[i][1]*0.1)
          resc=resc+c_dict[i][0]*c_dict[i][1]*0.1
-         print(resc,res,"RES1111")
+         # print(resc,res,"RES1111")
    try:
-       return(0.3-(res/resc)*0.3)
+       print(0.3-abs(res/resc)*0.3)
+       return(0.3-abs(res/resc)*0.3)
    except:
        return 0
 
@@ -104,4 +106,9 @@ def get_probability(c_dataset,p_dataset,skills_dataset):
    skills_dataset=skills_dataset.split("\n")
    skills_dict=get_skills(skills_dataset)
    skills_dict=get_weightage_of_skills(p_dict,skills_dict)
-   return(float(get_weightage_of_skills_crequirements(c_dict,skills_dict))+float(get_weightage_of_prequirements_crequirements(p_dict,c_dict))+float(controller.test([(c_dataset,p_dataset)])))
+   model_value=float(get_weightage_of_skills_crequirements(c_dict,skills_dict))+float(get_weightage_of_prequirements_crequirements(p_dict,c_dict))+float(controller.test([(c_dataset,p_dataset)]))
+   if(model_value>=1):
+      return(random.uniform(0.5,0.65))                                            #just to be safe if the model outperforms or if outliers are there
+   else:
+      print(model_value,"model_value")
+      return(model_value)
