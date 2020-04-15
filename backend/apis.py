@@ -797,9 +797,9 @@ emp_name and provider is the id of the employee in emp_login table
 def add_internship_scholarship():
     req = request.get_json()
     if request.method != "PUT":
-        return jsonify({}), RS405
+        return jsonify({"message": "Method not allowed"}), RS405
     if not ("usertype" in req):
-        return jsonify({}), RS400
+        return jsonify({"message": "usertype not specified"}), RS400
     usertype = req["usertype"]
     username = getmaxid(usertype)
     if usertype == "scholarship":
@@ -811,7 +811,7 @@ def add_internship_scholarship():
             and "category" in req
             and "branch" in req
         ):
-            return jsonify({}), RS400
+            return jsonify({"message": "Missing arguments"}), RS400
     elif usertype == "internship":
         table = "internship"
         if not (
@@ -823,15 +823,15 @@ def add_internship_scholarship():
             and "description" in req
             and "gpa" in req
         ):
-            return jsonify({}), RS400
+            return jsonify({"message": "Missing arguments"}), RS400
     else:
-        return jsonify({}), RS400
+        return jsonify({"message": "Invalid usertype"}), RS400
     if username == "":
-        return jsonify({}), RS400
+        return jsonify({"message": "username empty"}), RS400
     l = check_user_exists(table, username, "")
     print(l)
     if len(l) != 0:
-        return jsonify({}), RS400
+        return jsonify({"message": "Unknown!"}), RS400
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     if table == "scholarship":
@@ -868,7 +868,7 @@ def add_internship_scholarship():
         )
     elif table == "internship":
         if req["itr_name"] == "":
-            return jsonify({}), RS400
+            return jsonify({"message", "No name given"}), RS400
         sstr = (
             "insert into "
             + table
@@ -907,7 +907,7 @@ def add_internship_scholarship():
             + ")"
         )
     else:
-        return jsonify({}), RS400
+        return jsonify({"message", "Wrong table"}), RS400
     print(sstr)
     cursorobj.execute(sstr)
     con.commit()
@@ -1110,7 +1110,7 @@ def get_internships_scholarships():
 # Tell me what all data should be sent back
 # <---------------------------------Delete the applications from applied_for table if the application is deleted by the student---------------->
 """
-delete is to delete any tuple of a table other than applied_for in the database"
+delete is to delete any tuple of TABLE applied_for in the database"
 Method : DELETE
 url: /api/v1/delete_applied?userid=vishnu&uid=s_0
 
