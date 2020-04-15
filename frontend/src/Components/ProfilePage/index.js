@@ -89,7 +89,7 @@ export default function Profile() {
                 Profile
             </Typography>
             <AppBar position="static" color="default">
-                {usertype == "student" ? (
+                {usertype === "student" ? (
                     <Tabs
                         value={value}
                         onChange={handleChange}
@@ -123,7 +123,7 @@ export default function Profile() {
             <TabPanel value={value} index={1} dir={theme.direction}>
                 <PersonalDetailsTab />
             </TabPanel>
-            {usertype == "student" ? (
+            {usertype === "student" ? (
                 <>
                     <TabPanel value={value} index={2} dir={theme.direction}>
                         <ProjectsTab />
