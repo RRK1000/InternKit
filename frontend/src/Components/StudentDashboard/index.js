@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '@material-ui/core';
 import TableInternship from "./TableInternship"
@@ -12,24 +12,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createDataInternship(id, name, branch, city, stipend, gpa, description = "No description added.", hasApplied = false) {
-  return { id, name, branch, city, stipend, gpa, description, hasApplied };
+function createDataInternship(id, name, branch, city, stipend, gpa, employer, description = "No description added.", hasApplied = false) {
+  return { id, name, branch, city, stipend, gpa, employer, description, hasApplied };
 }
 
 function StudentDashboard() {
   const classes = useStyles();
   const [rowsInternship, setRowsInternship] = useState([]);
   const username = useStoreValue('username')
-  var appliedInternships = {}
   // const [rowsScholarship, setRowsScholarship] = useState([]);
 
-  async function fetchInternships() {
+  const fetchInternships = useCallback(async () => {
     // Fetch applied intnernships
-    let temp = await fetch(baseUrl + "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
+    let appliedInternships = await fetch(baseUrl + "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
       mode: 'cors',
     }).catch(e => console.log("Failed to fetch" + e));
-    for (const uid in await temp.json())
-      appliedInternships[uid] = true;
+    appliedInternships = await appliedInternships.json()
+    Object.keys(appliedInternships).forEach(v => appliedInternships[v] = true)
 
     // Fetch all internships
     let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
@@ -40,7 +39,7 @@ function StudentDashboard() {
     for (const uid in data) {
       if (uid[0] === 'i') { // Internship
         let info = data[uid]
-        let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.description, appliedInternships[uid])
+        let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.emp_name, info.description, appliedInternships[uid])
         rows.push(row)
       }
       else { //Scholarship
@@ -48,11 +47,11 @@ function StudentDashboard() {
       }
     }
     setRowsInternship(rows);
-  }
+  }, [username])
 
   useEffect(() => {
     fetchInternships()
-  }, []);
+  }, [fetchInternships]);
 
   return (
     <Container className={classes.root} maxWidth="lg">

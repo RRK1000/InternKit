@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Link, Button } from '@material-ui/core';
 import TableInternship from "./TableInternship"
-import { useStoreValue } from 'react-context-hook';
+import { useStoreValue, useSetStoreValue } from 'react-context-hook';
 import { Link as RouterLink } from 'react-router-dom';
 
 const baseUrl = "http://127.0.0.1:5000"
@@ -13,14 +13,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createDataInternship(id, name, branch, city, stipend, gpa, description = "No description added.") {
-  return { id, name, branch, city, stipend, gpa, description };
+function createDataInternship(id, name, branch, city, stipend, gpa, employer, description = "No description added.") {
+  return { id, name, branch, city, stipend, gpa, employer, description };
 }
 
 function CompanyDashboard() {
   const classes = useStyles();
   const [rowsInternship, setRowsInternship] = useState([]);
   const username = useStoreValue('username');
+  const refreshInternships = useStoreValue('refreshInternships', 1)
 
   const fetchInternships = useCallback(async () => {
     let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
@@ -35,7 +36,7 @@ function CompanyDashboard() {
       if (uid[0] === 'i') { // Internship
         let info = data[uid]
         if (info.emp_id === username) {
-          let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.description)
+          let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.emp_name, info.description)
           rows.push(row)
         }
       }
@@ -44,8 +45,7 @@ function CompanyDashboard() {
       }
     }
     setRowsInternship(rows);
-    console.log(data)
-  }, [username])
+  }, [username, refreshInternships])
 
   useEffect(() => {
     fetchInternships()
