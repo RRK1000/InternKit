@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { TableRow, TableCell, Button } from '@material-ui/core';
+import { TableRow, TableCell, Button, Link } from '@material-ui/core';
 import { useStoreValue } from 'react-context-hook';
 const baseUrl = "http://127.0.0.1:5000"
 
 function MyRow(props) {
 	const row = props.row;
 	const uid = row.id;
-	const [hasApplied, setHasApplied] = useState(false);
+	const [hasApplied, setHasApplied] = useState(row.hasApplied);
 	const username = useStoreValue('username')
 	const token = useStoreValue('isLoggedIn')
 
@@ -27,6 +27,15 @@ function MyRow(props) {
 		else alert(JSON.stringify(res))
 	};
 
+	async function revokeInternship() {
+		let res = await fetch(baseUrl + "/api/v1/delete_applied?" + new URLSearchParams({ userid: username, uid }), {
+			method: "DELETE",
+			mode: "cors"
+		}).catch(e => alert(e));
+		if (res && res.ok)
+			setHasApplied(false);
+	}
+
 	return (
 		<TableRow key={row.name}>
 			<TableCell component="th" scope="row">
@@ -45,6 +54,12 @@ function MyRow(props) {
 				>
 					{hasApplied ? "Applied" : "Apply"}
 				</Button>
+				{hasApplied ?
+					<Link component="button" onClick={revokeInternship}>
+						Revoke
+					</Link> :
+					<span />
+				}
 			</TableCell>
 		</TableRow>
 	);

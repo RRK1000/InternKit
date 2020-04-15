@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container } from '@material-ui/core';
 import TableInternship from "./TableInternship"
+import { useStoreValue } from 'react-context-hook';
 
 const baseUrl = "http://127.0.0.1:5000"
 
@@ -11,28 +12,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createDataInternship(id, name, branch, city, stipend, gpa, description = "No description added.") {
-  return { id, name, branch, city, stipend, gpa, description };
+function createDataInternship(id, name, branch, city, stipend, gpa, description = "No description added.", hasApplied = false) {
+  return { id, name, branch, city, stipend, gpa, description, hasApplied };
 }
 
 function StudentDashboard() {
   const classes = useStyles();
   const [rowsInternship, setRowsInternship] = useState([]);
+  const username = useStoreValue('username')
+  var appliedInternships = {}
   // const [rowsScholarship, setRowsScholarship] = useState([]);
 
   async function fetchInternships() {
+    // Fetch applied intnernships
+    let temp = await fetch(baseUrl + "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
+      mode: 'cors',
+    }).catch(e => console.log("Failed to fetch" + e));
+    for (const uid in await temp.json())
+      appliedInternships[uid] = true;
+
+    // Fetch all internships
     let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
       mode: 'cors',
-      headers: {
-        "Content-Type": "application/json",
-      }
     }).catch(e => console.log("Failed to fetch" + e));
     let data = await res.json();
     let rows = []
     for (const uid in data) {
       if (uid[0] === 'i') { // Internship
         let info = data[uid]
-        let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.description)
+        let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.description, appliedInternships[uid])
         rows.push(row)
       }
       else { //Scholarship
