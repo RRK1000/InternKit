@@ -23,11 +23,14 @@ def get_stopwords():
 def get_skills(string):                                                    #string is a list here separated by \n
    skills_dict={}
    for i in string:
+      i=i.strip()
       i=i.split('-')
+      print("iiiiiii",i)
       words=i[0].split()
       for j in words:
          j=j.strip().lower()
          if(j not in skills_dict):
+            print("j,i",i)
             skills_dict[j]=int(i[1].strip())
          else:
             if(skills_dict[j]<int(i[1].strip())):
@@ -65,11 +68,16 @@ def get_weightage_of_skills(p_dict,skills_dict):
 def get_weightage_of_skills_crequirements(c_dict,skills_dict):
    res=0
    resc=0
+   print(c_dict)
    for i in skills_dict:
       if i in c_dict:
          res=res+skills_dict[i]*0.1*c_dict[i][0]*c_dict[i][1]*0.1
          resc=resc+c_dict[i][0]*c_dict[i][1]*0.1
-   return (res/resc)*0.5
+         print(resc,res,"RES")
+   try:
+      return (res/resc)*0.5
+   except:
+      return 0
 
 
 #<-------------------------Finding the weightage of the project requirements with respect to the company requirements given------------------>
@@ -80,13 +88,20 @@ def get_weightage_of_prequirements_crequirements(p_dict,c_dict):
       if i in c_dict:
          res=res+(c_dict[i][0]*c_dict[i][1]*0.1-p_dict[i][0]*p_dict[i][1]*0.1)
          resc=resc+c_dict[i][0]*c_dict[i][1]*0.1
-   return(0.3-(res/resc)*0.3)
+         print(resc,res,"RES1111")
+   try:
+       return(0.3-(res/resc)*0.3)
+   except:
+       return 0
 
 
 #<------------------------------The probability function calling the siamese lstm and being called by the api---------------------------------->
 def get_probability(c_dataset,p_dataset,skills_dataset):
+   c_dataset=c_dataset.lower()
+   p_dataset=p_dataset.lower()
    c_dict=create_word_cloud(c_dataset)
    p_dict=create_word_cloud(p_dataset)
+   skills_dataset=skills_dataset.split("\n")
    skills_dict=get_skills(skills_dataset)
    skills_dict=get_weightage_of_skills(p_dict,skills_dict)
    return(float(get_weightage_of_skills_crequirements(c_dict,skills_dict))+float(get_weightage_of_prequirements_crequirements(p_dict,c_dict))+float(controller.test([(c_dataset,p_dataset)])))
