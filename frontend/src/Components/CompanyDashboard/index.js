@@ -48,7 +48,10 @@ function CompanyDashboard() {
   }, [username, refreshInternships])
 
   useEffect(() => {
-    fetchInternships()
+    fetchInternships();
+    setInterval(() => {
+      fetchInternships();
+    }, 5000);
   }, [fetchInternships]);
 
   return (

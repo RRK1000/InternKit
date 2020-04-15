@@ -35,7 +35,7 @@ function MyRow(props) {
 		<TableRow key={row.name}>
 			<TableCell component="th" scope="row">
 				<b>{row.name}</b>
-				<p>{row.employer}</p>
+				{/* <p>{row.employer}</p> */}
 				<p style={{ "whiteSpace": "pre-line" }}>{hasClicked ? "" : row.description}</p>
 				<p>{hasClicked ? "" : "GPA criteria: " + row.gpa}</p>
 				{

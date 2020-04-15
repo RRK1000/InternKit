@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TableRow, TableCell, Button, Link } from '@material-ui/core';
 import { useStoreValue } from 'react-context-hook';
 const baseUrl = "http://127.0.0.1:5000"
@@ -9,6 +9,10 @@ function MyRow(props) {
 	const [hasApplied, setHasApplied] = useState(row.hasApplied);
 	const username = useStoreValue('username')
 	const token = useStoreValue('isLoggedIn')
+
+	useEffect(() => {
+		setHasApplied(row.hasApplied);
+	}, [row.hasApplied])
 
 	async function applyInternship() {
 		if (hasApplied) return;
@@ -55,12 +59,11 @@ function MyRow(props) {
 				>
 					{hasApplied ? "Applied" : "Apply"}
 				</Button>
-				{hasApplied ?
-					<Link component="button" onClick={revokeInternship}>
+				{hasApplied && (
+					<Link show={hasApplied} component="button" onClick={revokeInternship}>
 						Revoke
-					</Link> :
-					<span />
-				}
+					</Link>
+				)}
 			</TableCell>
 		</TableRow>
 	);
