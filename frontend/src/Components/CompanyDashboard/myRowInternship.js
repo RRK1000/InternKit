@@ -10,17 +10,35 @@ function MyRow(props) {
 	const [hasClicked, sethasClicked] = useState(false);
 	const [applicants, setApplicants] = useState({});
 	const [refreshInternships, setRefreshInternships] = useGetAndSet('refreshInternships', 1);
+	var intervalId = 0;
 
 	async function fetchApplications() {
 		let res = await fetch(baseUrl + "/api/v1/students_internship_scholarship?" + new URLSearchParams({ uid }), {
 			mode: 'cors',
 		}).catch(e => console.log("Failed to fetch" + e));
-		// console.log(res)
 		if (res && res.ok) {
-			sethasClicked(true)
 			setApplicants(await res.json())
 		}
+		else throw Error("Failed to fetch")
 	};
+
+	function onViewApplications() {
+		fetchApplications()
+			.then(() => sethasClicked(true))
+			.catch(e => alert(e))
+
+		intervalId = setInterval(() => {
+			fetchApplications()
+				.then(() => sethasClicked(true))
+				.catch(e => alert(e))
+		}, 5000);
+	}
+
+	function hideApplications() {
+		sethasClicked(false)
+		clearInterval(intervalId)
+	}
+
 	async function deleteInternship() {
 		let res = await fetch(baseUrl + "/api/v1/delete?" + new URLSearchParams({ uid, usertype: "internship" }), {
 			method: 'DELETE',
@@ -40,12 +58,12 @@ function MyRow(props) {
 				<p>{hasClicked ? "" : "GPA criteria: " + row.gpa}</p>
 				{
 					hasClicked ?
-						<ViewApplications hideApplications={() => sethasClicked(false)} applicants={applicants} internshipId={row.id} /> :
+						<ViewApplications hideApplications={() => hideApplications} applicants={applicants} internshipId={row.id} /> :
 						<Grid container spacing={1}>
 							<Grid item>
 								<Button
 									variant="contained"
-									onClick={fetchApplications}
+									onClick={onViewApplications}
 									color="primary"
 								>
 									{"View Applications"}

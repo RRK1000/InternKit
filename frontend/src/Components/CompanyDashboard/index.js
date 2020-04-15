@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Link, Button } from '@material-ui/core';
 import TableInternship from "./TableInternship"
-import { useStoreValue, useSetStoreValue } from 'react-context-hook';
+import { useStoreValue } from 'react-context-hook';
 import { Link as RouterLink } from 'react-router-dom';
 
 const baseUrl = "http://127.0.0.1:5000"
@@ -45,7 +45,7 @@ function CompanyDashboard() {
       }
     }
     setRowsInternship(rows);
-  }, [username, refreshInternships])
+  }, [username, refreshInternships]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchInternships();
