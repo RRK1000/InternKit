@@ -45,10 +45,14 @@ def getmaxid(table):
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
     l = list(cursorobj.execute("select * from " + table))
+    if(len(l)!=0):
+        iD=int(l[len(l)-1][0][2:])
+    else:
+        iD=0
     if table == "scholarship":
-        return "s_" + str(len(l))
+        return "s_" + str(iD+1)
     elif table == "internship":
-        return "i_" + str(len(l))
+        return "i_" + str(iD+1)
 
 
 # <----------------------------Check User Exists------------------------------->
@@ -828,9 +832,10 @@ def add_internship_scholarship():
         return jsonify({"message": "Invalid usertype"}), RS400
     if username == "":
         return jsonify({"message": "username empty"}), RS400
-    l = check_user_exists(table, username, "")
+    emp_name=req["emp_name"]
+    l = check_user_exists("emp_login", emp_name, "")
     print(l)
-    if len(l) != 0:
+    if len(l) == 0:
         return jsonify({"message": "Unknown!"}), RS400
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
