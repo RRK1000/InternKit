@@ -11,7 +11,7 @@ function ViewApplications(props) {
 				<ol>
 					{Object.keys(applicants).map((keyName, i) => (
 						<li className="travelcompany-input" key={i}>
-							<OneApplicant details={applicants[keyName]} />
+							<OneApplicant details={applicants[keyName]} internshipId={props.internshipId} />
 						</li>
 					))}
 				</ol>

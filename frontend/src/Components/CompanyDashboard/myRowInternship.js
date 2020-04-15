@@ -40,7 +40,7 @@ function MyRow(props) {
 				<p>{hasClicked ? "" : "GPA criteria: " + row.gpa}</p>
 				{
 					hasClicked ?
-						<ViewApplications hideApplications={() => sethasClicked(false)} applicants={applicants} /> :
+						<ViewApplications hideApplications={() => sethasClicked(false)} applicants={applicants} internshipId={row.id} /> :
 						<Grid container spacing={1}>
 							<Grid item>
 								<Button
