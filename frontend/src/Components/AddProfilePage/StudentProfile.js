@@ -58,8 +58,6 @@ export default function StudentProfile() {
     const [branch, setBranch] = useState("");
     const [github, setGithub] = useState("");
     const [linkedIn, setLinkedIn] = useState("");
-    // const [skills, setSkills] = useState("");
-    //   const [pdescription, setPdescription] = useState("");
 
     const token = useStoreValue("isLoggedIn");
     const username = useStoreValue("username");
@@ -77,8 +75,6 @@ export default function StudentProfile() {
         else if (e.target.name === "branch") setBranch(e.target.value);
         else if (e.target.name === "github") setGithub(e.target.value);
         else if (e.target.name === "linkedIn") setLinkedIn(e.target.value);
-        // else if (e.target.name === "skills") setSkills(e.target.value);
-        // else if (e.target.name === "pdescription") setPdescription(e.target.value);
     };
     const [skill, setSkill] = useState({ val: [] });
     const [values, setValues] = useState({ val: [] });
@@ -185,7 +181,6 @@ export default function StudentProfile() {
         let vals = [...project.val];
 
         vals[event.target.id] = event.target.value;
-        console.log(vals);
         setProject({ val: vals });
     };
 
@@ -193,7 +188,6 @@ export default function StudentProfile() {
         let vals = [...desc.val];
 
         vals[event.target.id] = event.target.value;
-        console.log(vals);
         setDesc({ val: vals });
     };
 
@@ -238,6 +232,7 @@ export default function StudentProfile() {
                 usertype,
             }
         );
+        console.log(JSON.stringify(data));
         fetch("http://127.0.0.1:5000/api/v1/addprofile", {
             method: "POST",
             mode: "cors",

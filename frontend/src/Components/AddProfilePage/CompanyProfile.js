@@ -47,6 +47,7 @@ export default function CompanyProfile() {
     const token = useStoreValue("isLoggedIn");
     const username = useStoreValue("username");
     const usertype = useGetAndSet("usertype");
+    console.log(usertype);
     const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
 
     const handleChange = (e) => {
@@ -73,7 +74,7 @@ export default function CompanyProfile() {
                 cname,
                 snetwork: github + ";" + linkedIn,
                 cdescription,
-                usertype,
+                usertype: usertype[0],
             }
         );
         console.log(data);

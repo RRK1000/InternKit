@@ -35,8 +35,44 @@ export default function PersonalDetailsTab() {
     const [github, setGithub] = useState("");
     const [linkedIn, setLinkedIn] = useState("");
 
+    const [o_dob, setODob] = useState("");
+    const [o_email, setOEmail] = useState("");
+    const [o_phone, setOPhone] = useState("");
+    const [o_github, setOGithub] = useState("");
+    const [o_linkedIn, setOLinkedIn] = useState("");
+
     const [isLoggedIn] = useGetAndSet("isLoggedIn");
     const [usertype] = useGetAndSet("usertype");
+
+    fetch(
+        "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
+            username +
+            "&usertype=" +
+            usertype,
+        {
+            method: "GET",
+            mode: "cors",
+        }
+    )
+        .then((response) => {
+            console.log(response);
+            if (response.ok) return response.json();
+            else throw Error(response.status + " " + response.statusText);
+        })
+        .then((data) => {
+            console.log(data);
+            setODob(data.dob);
+            setOEmail(data.email);
+            setOPhone(data.phone);
+            let index = data.snetwork.search(";");
+            let git = data.snetwork.substr(0, index);
+            let l = data.snetwork.substr(index + 1, data.snetwork.length);
+            setOGithub(git);
+            setOLinkedIn(l);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 
     const handleChange = (e) => {
         if (e.target.name === "dob") setDob(e.target.value);
@@ -46,55 +82,26 @@ export default function PersonalDetailsTab() {
         else if (e.target.name === "linkedIn") setLinkedIn(e.target.value);
     };
 
-    const editAcc = async () => {
-        await fetch(
-            "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
-                username +
-                "&usertype=" +
-                usertype,
-            {
-                method: "GET",
-                mode: "cors",
-            }
-        )
-            .then((response) => {
-                console.log(response);
-                if (response.ok) return response.json();
-                else throw Error(response.status + " " + response.statusText);
-            })
-            .then((data) => {
-                console.log(data);
-                if (dob === "") setDob(data.dob);
-                if (email === "") setEmail(data.email);
-                if (phone === "") setPhone(data.phone);
-                let index = data.snetwork.search(";");
-                let git = data.snetwork.substr(0, index);
-                let l = data.snetwork.substr(index + 1, data.snetwork.length);
-                if (github === "") setGithub(git);
-                if (linkedIn === "") setLinkedIn(l);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-
+    const editAcc = () => {
+        console.log(o_email);
         let ndetails =
             "[" +
             "'" +
-            dob +
+            (dob || o_dob) +
             "'" +
             "," +
             "'" +
-            email +
+            (email || o_email) +
             "'" +
             "," +
             "'" +
-            phone +
+            (phone || o_phone) +
             "'" +
             "," +
             "'" +
-            github +
+            (github || o_github) +
             ";" +
-            linkedIn +
+            (linkedIn || o_linkedIn) +
             "'" +
             "]";
         console.log(JSON.stringify(ndetails));

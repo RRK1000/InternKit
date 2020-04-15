@@ -14,6 +14,7 @@ import AccountTab from "./AccountTab";
 import PersonalDetailsTab from "./PersonalDetailsTab";
 import ProjectsTab from "./ProjectsTab";
 import SkillsTab from "./SkillsTab";
+import CompanyDescriptionTab from "./CompanyDescriptionTab";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -68,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: theme.spacing(0),
         marginBottom: theme.spacing(2),
         fontSize: 9,
-    }
+    },
 }));
 
 export default function Profile() {
@@ -133,7 +134,7 @@ export default function Profile() {
                 </>
             ) : (
                 <TabPanel value={value} index={2} dir={theme.direction}>
-                    Company Description
+                    <CompanyDescriptionTab />
                 </TabPanel>
             )}
         </Container>
