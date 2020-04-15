@@ -38,13 +38,13 @@ function OneApplicant(props) {
 						{details.skills.trim()}<br />
 					</Container>
 					{(clicked && accProb != -1) ?
-						<span style={{ "color": "red" }}>Acceptance probability: {accProb} %</span> :
+						<span style={{ "color": "red" }}>Match percentage: {accProb} %</span> :
 						<Button
 							color="primary"
 							size="small"
 							onClick={getAcceptanceProb}
 						>
-							{(clicked && accProb === -1) ? "Fetching..." : "View Acceptance probability"}
+							{(clicked && accProb === -1) ? "Fetching..." : "View Match percentage"}
 						</Button>
 					}
 					<br />
