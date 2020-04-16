@@ -33,6 +33,7 @@ const useStyles = (theme) => ({
 function SignIn(props) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [hasSubmitted, setHasSubmitted] = useState(false);
     var token = null;
 
     const [usertype, setUserType] = useGetAndSet("usertype", "student");
@@ -41,6 +42,7 @@ function SignIn(props) {
     const setAuthUsername = useSetStoreValue("username");
 
     const doLogin = () => {
+        setHasSubmitted(true);
         const data = Object.assign({}, { username, password, usertype });
         console.log(data);
         fetch("http://127.0.0.1:5000/api/v1/login", {
@@ -61,10 +63,10 @@ function SignIn(props) {
                 token = data.token;
                 return fetch(
                     "http://127.0.0.1:5000/api/v1/getdetails?" +
-                    new URLSearchParams({
-                        uid: username,
-                        usertype
-                    }),
+                        new URLSearchParams({
+                            uid: username,
+                            usertype,
+                        }),
                     {
                         method: "GET",
                         mode: "cors",
@@ -76,21 +78,24 @@ function SignIn(props) {
                 setHasProfile(response.ok);
             })
             .then(() => {
-                console.log(token)
+                console.log(token);
                 setIsLoggedIn(token);
                 setUserType(usertype);
                 setAuthUsername(username);
+                setHasSubmitted(false);
+
                 setToken(token); // maintained so other things don't break.
             })
             .catch((error) => {
                 console.error("Error:", error);
                 alert("Credentials Invalid.");
+                setPassword("");
+                setHasSubmitted(false);
             });
     };
     const { classes } = props;
     if (isLoggedIn)
-        if (hasProfile)
-            return <Redirect to="/" />;
+        if (hasProfile) return <Redirect to="/" />;
         else return <Redirect to="/addprofile" />;
     else
         return (
@@ -102,7 +107,7 @@ function SignIn(props) {
                     className={classes.root}
                     noValidate
                     autoComplete="off"
-                // onSubmit={this.doLogin}
+                    // onSubmit={this.doLogin}
                 >
                     <Grid container>
                         <Grid container item>
@@ -113,7 +118,20 @@ function SignIn(props) {
                                 name="username"
                                 value={username}
                                 variant="outlined"
-                                onChange={(e) => setUsername(e.target.value)}
+                                error={
+                                    username === "" && hasSubmitted
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    password === "" && hasSubmitted
+                                        ? "Incorrect entry."
+                                        : ""
+                                }
+                                onChange={(e) => {
+                                    setHasSubmitted(false);
+                                    setUsername(e.target.value);
+                                }}
                             />
                         </Grid>
 
@@ -125,9 +143,22 @@ function SignIn(props) {
                                 type="password"
                                 name="password"
                                 value={password}
+                                error={
+                                    password === "" && hasSubmitted
+                                        ? true
+                                        : false
+                                }
+                                helperText={
+                                    password === "" && hasSubmitted
+                                        ? "Incorrect entry."
+                                        : ""
+                                }
                                 autoComplete="current-password"
                                 variant="outlined"
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => {
+                                    setHasSubmitted(false);
+                                    setPassword(e.target.value);
+                                }}
                             />
                         </Grid>
 

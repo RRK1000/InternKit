@@ -46,12 +46,15 @@ function SignUp(props) {
     const [usertype, setUserType] = useGetAndSet("usertype");
     const setHasProfile = useSetStoreValue("hasProfile");
     const setAuthUsername = useSetStoreValue("username");
+    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [repassword, setRePassword] = useState("");
     const [name, setName] = useState("");
 
     const onSubmit = () => {
+        setHasSubmitted(true);
         const headers = {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
@@ -71,6 +74,7 @@ function SignUp(props) {
             .catch((err) => {
                 if (err.response) {
                     alert(err.response.data.message);
+                    setHasSubmitted(false);
                 } else alert(err);
             });
     };
@@ -79,121 +83,158 @@ function SignUp(props) {
     return isLoggedIn ? (
         <Redirect to="/addprofile" />
     ) : (
-            <Container maxWidth="sm">
-                <Typography className={classes.heading} variant="h4">
-                    Sign Up
+        <Container maxWidth="sm">
+            <Typography className={classes.heading} variant="h4">
+                Sign Up
             </Typography>
-                <form
-                    className={classes.root}
-                    noValidate
-                    autoComplete="off"
+            <form
+                className={classes.root}
+                noValidate
+                autoComplete="off"
                 // onSubmit={this.onSubmit}
-                >
-                    <Grid container>
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required"
-                                label="Username"
-                                name="username"
-                                value={username}
-                                variant="outlined"
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </Grid>
-
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="standard-password-input1"
-                                label="Enter Password"
-                                type="password"
-                                name="password"
-                                value={password}
-                                autoComplete="current-password"
-                                variant="outlined"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </Grid>
-
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="standard-password-input2"
-                                label="Re-enter Password"
-                                type="password"
-                                name="password"
-                                autoComplete="current-password"
-                                variant="outlined"
-                            />
-                        </Grid>
-
-                        <Grid container item>
-                            <TextField
-                                required
-                                id="outlined-required2"
-                                label="Name"
-                                name="name"
-                                value={name}
-                                variant="outlined"
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </Grid>
-
-                        <Grid container item>
-                            <FormControl
-                                className={classes.formControl}
-                                component="fieldset"
-                            >
-                                <FormLabel component="legend">
-                                    Student/Company
-                            </FormLabel>
-                                <RadioGroup
-                                    aria-label="UserType"
-                                    name="usertype"
-                                    value={usertype}
-                                    onChange={(e) => setUserType(e.target.value)}
-                                >
-                                    <FormControlLabel
-                                        value="student"
-                                        control={<Radio color="primary" />}
-                                        label="Student"
-                                    />
-                                    <FormControlLabel
-                                        value="employee"
-                                        control={<Radio color="primary" />}
-                                        label="Company"
-                                    />
-                                </RadioGroup>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid container item>
-                            <Typography
-                                className={classes.caption}
-                                variant="caption"
-                            >
-                                Already have an account?{" "}
-                                <Link href="/signin" color="primary">
-                                    Click here
-                            </Link>
-                            </Typography>
-                        </Grid>
-                        <Grid container item>
-                            <Button
-                                className={classes.button}
-                                variant="contained"
-                                color="primary"
-                                // type="submit"
-                                onClick={onSubmit}
-                            >
-                                Proceed to Add Profile
-                        </Button>
-                        </Grid>
+            >
+                <Grid container>
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required"
+                            label="Username"
+                            name="username"
+                            value={username}
+                            error={
+                                username === "" && hasSubmitted ? true : false
+                            }
+                            helperText={
+                                username === "" && hasSubmitted
+                                    ? "Incorrect entry."
+                                    : ""
+                            }
+                            variant="outlined"
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
                     </Grid>
-                </form>
-            </Container>
-        );
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="standard-password-input1"
+                            label="Enter Password"
+                            type="password"
+                            name="password"
+                            value={password}
+                            error={
+                                password === "" && hasSubmitted ? true : false
+                            }
+                            helperText={
+                                password === "" && hasSubmitted
+                                    ? "Incorrect entry."
+                                    : ""
+                            }
+                            variant="outlined"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="standard-password-input2"
+                            label="Re-enter Password"
+                            type="password"
+                            name="repassword"
+                            value={repassword}
+                            error={
+                                (password === "" ||
+                                password !== repassword) &&
+                                hasSubmitted
+                                    ? true
+                                    : false
+                            }
+                            helperText={
+                                (password === "" ||
+                                password !== repassword) &&
+                                hasSubmitted
+                                    ? "Passwords don't match."
+                                    : ""
+                            }
+                            variant="outlined"
+                            onChange={(e) => setRePassword(e.target.value)}
+                            variant="outlined"
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <TextField
+                            required
+                            id="outlined-required2"
+                            label="Name"
+                            name="name"
+                            value={name}
+                            error={name === "" && hasSubmitted ? true : false}
+                            helperText={
+                                name === "" && hasSubmitted
+                                    ? "Incorrect entry."
+                                    : ""
+                            }
+                            variant="outlined"
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid container item>
+                        <FormControl
+                            className={classes.formControl}
+                            component="fieldset"
+                        >
+                            <FormLabel component="legend">
+                                Student/Company
+                            </FormLabel>
+                            <RadioGroup
+                                aria-label="UserType"
+                                name="usertype"
+                                value={usertype}
+                                onChange={(e) => setUserType(e.target.value)}
+                            >
+                                <FormControlLabel
+                                    value="student"
+                                    control={<Radio color="primary" />}
+                                    label="Student"
+                                />
+                                <FormControlLabel
+                                    value="employee"
+                                    control={<Radio color="primary" />}
+                                    label="Company"
+                                />
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid container item>
+                        <Typography
+                            className={classes.caption}
+                            variant="caption"
+                        >
+                            Already have an account?{" "}
+                            <Link href="/signin" color="primary">
+                                Click here
+                            </Link>
+                        </Typography>
+                    </Grid>
+                    <Grid container item>
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="primary"
+                            // type="submit"
+                            onClick={onSubmit}
+                        >
+                            Proceed to Add Profile
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+        </Container>
+    );
 }
 
 export default withStyles(useStyles)(SignUp);
