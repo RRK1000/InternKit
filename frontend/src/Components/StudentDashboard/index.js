@@ -28,27 +28,31 @@ function StudentDashboard() {
     // Fetch applied intnernships
     let appliedInternships = await fetch(baseUrl + "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
       mode: 'cors',
-    }).catch(e => console.log("Failed to fetch" + e));
-    appliedInternships = await appliedInternships.json()
-    Object.keys(appliedInternships).forEach(v => appliedInternships[v] = true)
+    }).catch(e => console.log("Failed to fetch" + e)) || {};
+    if (appliedInternships && appliedInternships.ok) {
+      appliedInternships = await appliedInternships.json()
+      Object.keys(appliedInternships).forEach(v => appliedInternships[v] = true)
+    }
 
     // Fetch all internships
     let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
       mode: 'cors',
     }).catch(e => console.log("Failed to fetch" + e));
-    let data = await res.json();
-    let rows = []
-    for (const uid in data) {
-      if (uid[0] === 'i') { // Internship
-        let info = data[uid]
-        let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.emp_name, info.description, appliedInternships[uid])
-        rows.push(row)
-      }
-      else { //Scholarship
+    if (res && res.ok) {
+      let data = await res.json();
+      let rows = []
+      for (const uid in data) {
+        if (uid[0] === 'i') { // Internship
+          let info = data[uid]
+          let row = createDataInternship(uid, info.itr_name, info.branch, info.city, info.stipend, info.gpa, info.emp_name, info.description, appliedInternships[uid])
+          rows.push(row)
+        }
+        else { //Scholarship
 
+        }
       }
+      setRowsInternship(rows);
     }
-    setRowsInternship(rows);
   }, [username])
 
   useEffect(() => {
