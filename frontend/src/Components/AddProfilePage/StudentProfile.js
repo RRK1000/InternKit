@@ -59,11 +59,11 @@ export default function StudentProfile() {
     const [github, setGithub] = useState("");
     const [linkedIn, setLinkedIn] = useState("");
 
+    const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
     const token = useStoreValue("isLoggedIn");
     const username = useStoreValue("username");
     const usertype = useStoreValue("usertype");
 
-    const [hasProfile, setHasProfile] = useGetAndSet("hasProfile");
 
     const handleChange = (e) => {
         if (e.target.name === "dob") setDob(e.target.value);

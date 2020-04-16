@@ -84,7 +84,7 @@ function SignIn(props) {
             })
             .catch((error) => {
                 console.error("Error:", error);
-                alert(error);
+                alert("Credentials Invalid.");
             });
     };
     const { classes } = props;

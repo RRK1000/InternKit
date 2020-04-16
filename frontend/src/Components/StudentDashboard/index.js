@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Redirect } from "react-router-dom";
 import { Container } from '@material-ui/core';
 import TableInternship from "./TableInternship"
 import { useStoreValue } from 'react-context-hook';
@@ -21,6 +22,7 @@ function StudentDashboard() {
   const [rowsInternship, setRowsInternship] = useState([]);
   const username = useStoreValue('username')
   // const [rowsScholarship, setRowsScholarship] = useState([]);
+  const hasProfile = useStoreValue("hasProfile");
 
   const fetchInternships = useCallback(async () => {
     // Fetch applied intnernships
@@ -52,6 +54,8 @@ function StudentDashboard() {
   useEffect(() => {
     fetchInternships()
   }, [fetchInternships]);
+
+  if (!hasProfile) return <Redirect to="/addprofile" />;
 
   return (
     <Container className={classes.root} maxWidth="lg">

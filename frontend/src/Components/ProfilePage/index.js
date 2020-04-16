@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
 // import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -78,10 +79,13 @@ export default function Profile() {
     const [value, setValue] = React.useState(0);
 
     const usertype = useStoreValue("usertype");
+    const hasProfile = useStoreValue("hasProfile");
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    if (!hasProfile) return <Redirect to="/addprofile" />;
 
     return (
         <Container maxWidth="lg" className={classes.container}>
