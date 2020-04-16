@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Container, Button } from '@material-ui/core';
+import { Link, Container } from '@material-ui/core';
 const baseUrl = "http://127.0.0.1:5000"
 
 function OneApplicant(props) {
@@ -13,7 +13,7 @@ function OneApplicant(props) {
 		let res = await fetch(baseUrl + "/api/v1/internship_probability_acceptance?" + new URLSearchParams({ uid: props.internshipId, userid: details.uid }), {
 			mode: 'cors',
 		}).catch(e => console.log("Failed to fetch" + e));
-		console.log(res)
+		// console.log(res)
 		if (res && res.ok) {
 			res = await res.json();
 			let probabilityAcceptance = (res["probability_acceptance"] * 100).toPrecision(4)
@@ -22,8 +22,12 @@ function OneApplicant(props) {
 	}
 	return (
 		<div>
-			<Link className="input-label"
-				onClick={() => setShowDetails(!showDetails)}>
+			<Link
+				component="button"
+				variant="body2"
+				className="input-label"
+				onClick={() => setShowDetails(!showDetails)}
+			>
 				{details.name} ({details.email})
 			</Link>
 			{showDetails && (
@@ -39,16 +43,16 @@ function OneApplicant(props) {
 					</Container>
 					{(clicked && accProb !== -1) ?
 						<span style={{ "color": "red" }}>Match percentage: {accProb} %</span> :
-						<Button
-							color="primary"
-							size="small"
+						<Link component="button" variant="body2"
+							// color="primary"
+							// size="small"
 							onClick={getAcceptanceProb}
 						>
-							{(clicked && accProb === -1) ? "Fetching..." : "View Match percentage"}
-						</Button>
+							{(clicked && accProb === -1) ? "Fetching..." : "View match percentage"}
+						</Link>
 					}
 					<br />
-					<Link onClick={() => setShowDetails(false)}>hide</Link>
+					<Link component="button" variant="body2" onClick={() => setShowDetails(false)}>hide</Link>
 				</div>
 			)}
 		</div>

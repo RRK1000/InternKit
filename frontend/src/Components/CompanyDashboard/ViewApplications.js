@@ -16,7 +16,7 @@ function ViewApplications(props) {
 					))}
 				</ol>
 			}
-			<Link onClick={props.hideApplications} color="primary">
+			<Link component="button" variant="body2"  onClick={props.hideApplications} color="primary">
 				Hide Applications
 			</Link>
 		</div>

@@ -35,8 +35,8 @@ function MyRow(props) {
 	}
 
 	function hideApplications() {
-		sethasClicked(false)
 		clearInterval(intervalId)
+		sethasClicked(false)
 	}
 
 	async function deleteInternship() {
@@ -58,7 +58,7 @@ function MyRow(props) {
 				<p>{hasClicked ? "" : "GPA criteria: " + row.gpa}</p>
 				{
 					hasClicked ?
-						<ViewApplications hideApplications={() => hideApplications} applicants={applicants} internshipId={row.id} /> :
+						<ViewApplications hideApplications={hideApplications} applicants={applicants} internshipId={row.id} /> :
 						<Grid container spacing={1}>
 							<Grid item>
 								<Button

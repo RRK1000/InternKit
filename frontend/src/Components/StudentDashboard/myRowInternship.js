@@ -60,7 +60,7 @@ function MyRow(props) {
 					{hasApplied ? "Applied" : "Apply"}
 				</Button>
 				{hasApplied && (
-					<Link show={hasApplied} component="button" onClick={revokeInternship}>
+					<Link color="secondary" show={hasApplied} component="button" onClick={revokeInternship}>
 						Revoke
 					</Link>
 				)}
