@@ -9,9 +9,10 @@ from flask_cors import CORS
 
 import sys
 sys.path.insert(1, 'intelligent_component/')
-import my_probability_model
+# import my_probability_model
 
 app = Flask(__name__)
+app.config['BASEDIR'] = "http://127.0.0.1:5000"
 CORS(app)
 
 RS500 = 500
@@ -26,6 +27,9 @@ jwtSecret = "ideallyReadFromFile"
 
 shalist = "0123456789abcdef"
 
+@app.route('/')
+def index():
+    return 'Hello World'
 
 def checksha(string):
     if len(string) != 40:
@@ -69,7 +73,7 @@ def check_user_exists(table, userid, uid):
         )
         return l
     elif table == "applied_for":
-        # print("select * from "+table+" where userid='"+userid+"'"+" and uid='"+uid+"'")
+        # #print("select * from "+table+" where userid='"+userid+"'"+" and uid='"+uid+"'")
         l = list(
             cursorobj.execute(
                 "select * from "
@@ -83,7 +87,7 @@ def check_user_exists(table, userid, uid):
             )
         )
         return l
-        print(l)
+        # #print(l)
     l = list(
         cursorobj.execute("select * from " + table +
                           " where userid='" + userid + "'")
@@ -99,7 +103,7 @@ def checkJwtWithUser(token, username):
         else:
             raise Exception("MisMatch", "username doesn't match token")
     except Exception as e:
-        print(e)
+        #print(e)
         return False
 
 
@@ -159,7 +163,7 @@ def signup():
     if name == "":
         return jsonify({"message": "Name empty"}), RS400
     l = check_user_exists(table, username, "")
-    print(l)
+    #print(l)
     if len(l) != 0:
         return jsonify({"message": "User already exists"}), RS400
     con = sqlite3.connect("backend/scokit.db")
@@ -202,7 +206,7 @@ def signup():
         )
     else:
         return jsonify({"message": "Usertype invalid"}), RS400
-    print(sstr)
+    #print(sstr)
     cursorobj.execute(sstr)
     con.commit()
     token = jwt.encode(
@@ -242,7 +246,7 @@ def deluid():
     else:
         return jsonify({}), RS400
     l = check_user_exists(table, name, "")
-    print(l)
+    #print(l)
     if len(l) != 0:
         con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
@@ -285,7 +289,7 @@ usertype--> student or employee
 @app.route("/api/v1/login", methods=["POST"])
 def login():
     req = request.get_json()
-    print(req)
+    #print(req)
     if request.method != "POST":
         return jsonify({"message": "Method not allowed"}), RS405
     if not ("username" in req and "password" in req and "usertype" in req):
@@ -302,7 +306,7 @@ def login():
     if username == "":
         return jsonify({"message": "Invalid username"}), RS400
     l = check_user_exists(table, username, "")
-    print(l)
+    #print(l)
     if len(l) != 0 and l[0][1] == password:
         token = jwt.encode(
             {"nonce": str(uuid4()), "username": username}, jwtSecret, algorithm="HS256").decode('utf-8')
@@ -344,13 +348,13 @@ def editdetails():
         and "new_details" in req
         and "token" in req
     ):
-        print("HOOOOIIII")
+        # print("HOOOOIIII")
         return jsonify({}), RS400
     if (not checkJwtWithUser(req["token"], req["uid"])):
         return jsonify({}), RS401
     username = req["uid"]
     usertype = req["usertype"]
-    print("Welcome3")
+    # print("Welcome3")
     if usertype == "student":
         table = "s_profile"
     elif usertype == "employee":
@@ -360,14 +364,14 @@ def editdetails():
     elif usertype == "internship":
         table = "internship"
     else:
-        print("HI##")
+        # print("HI##")
         return jsonify({}), RS400
     if username == "":
-        print("HOOOO")
+        # print("HOOOO")
         return jsonify({}), RS400
     l = check_user_exists(table, username, "")
-    print("HI")
-    print(l)
+    # print("HI")
+    # print(l)
     if len(l) == 0:
         print("le")
         return jsonify({}), RS400
@@ -382,9 +386,9 @@ def editdetails():
         elif table == "scholarship" or table == "internship":
             sstr = sstr[: len(sstr) - 1] + " where uid='" + username + "'"
         else:
-            print("Hiiiiiiiii")
+            #print("Hiiiiiiiii")
             return jsonify({}), RS400
-        print(sstr)
+        #print(sstr)
         con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
         cursorobj.execute(sstr)
@@ -442,7 +446,7 @@ def editpassword():
     if username == "":
         return jsonify({}), RS400
     l = check_user_exists(table, username, "")
-    print(l)
+    #print(l)
     if len(l) == 0:
         return jsonify({}), RS400
     else:
@@ -457,7 +461,7 @@ def editpassword():
                 + username
                 + "'"
             )
-            print(sstr)
+            #print(sstr)
             con = sqlite3.connect("backend/scokit.db")
             cursorobj = con.cursor()
             cursorobj.execute(sstr)
@@ -506,8 +510,8 @@ def getdetails():
     if usertype == "student" or usertype == "employee":
         l = check_user_exists(table, username, "")
         lprofile = check_user_exists(table1, username, "")
-        print(l)
-        print(lprofile)
+        #print(l)
+        #print(lprofile)
         if len(l) != 0 and len(lprofile) != 0:
             if table == "student":
                 return (
@@ -551,7 +555,7 @@ def getdetails():
             return jsonify({}), RS400
     if usertype == "scholarship" or usertype == "internship":
         l = check_user_exists(table, username, "")
-        print(l)
+        #print(l)
         if len(l) != 0:
             if table == "scholarship":
                 l1 = check_user_exists("emp_login", l[0][3], "")
@@ -639,12 +643,12 @@ Please give it in the same format as given in the above example
 
 @app.route("/api/v1/addprofile", methods=["POST"])
 def profile():
-    print("HII")
+    #print("HII")
     req = request.get_json()
-    print(req)
+    #print(req)
     if request.method != "POST":
         return jsonify({}), RS405
-    print("Noooooo")
+    #print("Noooooo")
     if not (
         "username" in req
         and "dob" in req
@@ -662,14 +666,14 @@ def profile():
         table = "s_profile"
     elif usertype == "employee":
         table = "e_profile"
-        print("Vishnu")
+        #print("Vishnu")
     else:
-        print("Hello")
+        #print("Hello")
         return jsonify({}), RS400
     if username == "":
         return jsonify({}), RS400
     l = check_user_exists(table, username, "")
-    print(l)
+    #print(l)
     if len(l) != 0:
         return jsonify({}), RS400
     con = sqlite3.connect("backend/scokit.db")
@@ -756,7 +760,7 @@ def profile():
         sstr = sstr + "," + "'" + req["phone"] + "'" + ")"
     else:
         return jsonify({}), RS400
-    print(sstr)
+    #print(sstr)
     cursorobj.execute(sstr)
     con.commit()
     return jsonify({}), RS201
@@ -834,7 +838,7 @@ def add_internship_scholarship():
         return jsonify({"message": "username empty"}), RS400
     emp_name=req["emp_name"]
     l = check_user_exists("emp_login", emp_name, "")
-    print(l)
+    #print(l)
     if len(l) == 0:
         return jsonify({"message": "Unknown!"}), RS400
     con = sqlite3.connect("backend/scokit.db")
@@ -913,7 +917,7 @@ def add_internship_scholarship():
         )
     else:
         return jsonify({"message", "Wrong table"}), RS400
-    print(sstr)
+    #print(sstr)
     cursorobj.execute(sstr)
     con.commit()
     return jsonify({}), RS201
@@ -965,9 +969,9 @@ def apply():
         return jsonify({"message": "Missing uid"}), RS400
     l = check_user_exists(table, username, uid)
     l1 = check_user_exists(type, uid, "")
-    print(l)
+    #print(l)
     if len(l) != 0 or len(l1) == 0:
-        print(len(l), len(l1))
+        #print(len(l), len(l1))
         return jsonify({"message": "Already applied"}), RS200
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
@@ -988,7 +992,7 @@ def apply():
         + "'"
         + ")"
     )
-    print(sstr)
+    #print(sstr)
     cursorobj.execute(sstr)
     con.commit()
     return jsonify({}), RS201
@@ -1014,7 +1018,7 @@ def get_students():
     table = "applied_for"
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
-    print("select * from " + table + " where uid='" + username + "'")
+    #print("select * from " + table + " where uid='" + username + "'")
     students_list = list(
         cursorobj.execute("select * from "
                           + table
@@ -1028,7 +1032,7 @@ def get_students():
         if(_[0] not in students_dict):
             students_dict[_[0]] = requests.get(
                         "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype=student").json()
-    print(students_dict)
+    #print(students_dict)
     return jsonify(students_dict), RS200
 
 
@@ -1055,7 +1059,7 @@ def get_internships_scholarships():
         return jsonify({}), RS400
     if(usertype == "student"):
         table = "applied_for"
-        print("select * from " + table + " where userid='" + username + "'")
+        #print("select * from " + table + " where userid='" + username + "'")
         students_list = list(
             cursorobj.execute("select * from "
                               + table
@@ -1076,10 +1080,10 @@ def get_internships_scholarships():
                         "http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
             else:
                 return jsonify({}), RS200
-        # print(students_dict)
+        # #print(students_dict)
         return jsonify(students_dict), RS200
     if(usertype == "employee"):
-        # print("select * from " + table + " where emp_name='" + username + "'")
+        # #print("select * from " + table + " where emp_name='" + username + "'")
         internscholarship_list = list(
             cursorobj.execute("select * from "
                               + "internship"
@@ -1097,7 +1101,7 @@ def get_internships_scholarships():
                               )
         )
         )
-        print(internscholarship_list, "HIIIIIIIIIIIIIIIIIIIIII")
+        #print(internscholarship_list, "HIIIIIIIIIIIIIIIIIIIIII")
         internscholarship_dict = {}
         for _ in internscholarship_list:
             if(_[0][0] == "s"):
@@ -1132,7 +1136,7 @@ def delapplied():
     uid = request.args.get("uid")
     table = "applied_for"
     l = check_user_exists(table, name, uid)
-    print(l)
+    #print(l)
     if len(l) != 0:
         con = sqlite3.connect("backend/scokit.db")
         cursorobj = con.cursor()
@@ -1155,7 +1159,7 @@ def all_internships_scholarships():
         return jsonify({}), RS405
     con = sqlite3.connect("backend/scokit.db")
     cursorobj = con.cursor()
-    # print("select * from " + table + " where uid='" + username + "'")
+    # #print("select * from " + table + " where uid='" + username + "'")
     scholarship_list = list(
         cursorobj.execute("select * from scholarship")
     )
@@ -1213,10 +1217,10 @@ def internship_probability_acceptance():
     # p_dataset= open("intelligent_component/Projects.txt","r").read().lower()
     # skills_dataset=open("intelligent_component/skills.txt","r").readlines()
     # probability_acceptance=my_probability_model.get_probability(c_dataset,p_dataset,skills_dataset)
-    #print(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
+    ##print(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
     probability_acceptance=my_probability_model.get_probability(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
     return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
-    #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
+    ##print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
     #return jsonify({"prob":str(checking.hello())}),RS200
     
     
