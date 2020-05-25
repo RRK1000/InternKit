@@ -64,22 +64,22 @@ class BasicTests(unittest.TestCase):
     # Login
 
 
-    def test_login(self):
-        with app.test_client() as client:
-            requestData = {
-                "username": "rrk",
-                "password": "123123123",
-                "usertype": "student"
-            }
-        response = self.app.post(
-            '/api/v1/login',
-            data=json.dumps(requestData),
-            headers={"Content-Type": "application/json"}
-        )
+    # def test_login(self):
+    #     with app.test_client() as client:
+    #         requestData = {
+    #             "username": "rrk",
+    #             "password": "123123123",
+    #             "usertype": "student"
+    #         }
+    #     response = self.app.post(
+    #         '/api/v1/login',
+    #         data=json.dumps(requestData),
+    #         headers={"Content-Type": "application/json"}
+    #     )
 
-        self.assertEqual(
-            response.status_code, 200
-        )
+    #     self.assertEqual(
+    #         response.status_code, 200
+    #     )
 
     # Get user details
     def test_get_details(self):
