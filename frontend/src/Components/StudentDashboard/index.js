@@ -5,7 +5,7 @@ import { Container } from '@material-ui/core';
 import TableInternship from "./TableInternship"
 import { useStoreValue } from 'react-context-hook';
 
-const baseUrl = "http://127.0.0.1:5000"
+const baseUrl = /*notLocalhost*/""
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +26,7 @@ function StudentDashboard() {
 
   const fetchInternships = useCallback(async () => {
     // Fetch applied intnernships
-    let appliedInternships = await fetch(baseUrl + "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
+    let appliedInternships = await fetch(/*noUrl*/ "/api/v1/internships_scholarships_posted_applied?" + new URLSearchParams({ uid: username, usertype: "student" }), {
       mode: 'cors',
     }).catch(e => console.log("Failed to fetch" + e)) || {};
     if (appliedInternships && appliedInternships.ok) {
@@ -35,7 +35,7 @@ function StudentDashboard() {
     }
 
     // Fetch all internships
-    let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
+    let res = await fetch(/*noUrl*/ "/api/v1/all_internship_scholarship", {
       mode: 'cors',
     }).catch(e => console.log("Failed to fetch" + e));
     if (res && res.ok) {

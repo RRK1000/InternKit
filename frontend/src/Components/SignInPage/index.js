@@ -45,7 +45,7 @@ function SignIn(props) {
         setHasSubmitted(true);
         const data = Object.assign({}, { username, password, usertype });
         console.log(data);
-        fetch("http://127.0.0.1:5000/api/v1/login", {
+        fetch(/*notLocalhost*/"/api/v1/login", {
             method: "POST",
             mode: "cors",
             headers: {
@@ -62,7 +62,7 @@ function SignIn(props) {
                 console.log("Success:", data);
                 token = data.token;
                 return fetch(
-                    "http://127.0.0.1:5000/api/v1/getdetails?" +
+                    /*notLocalhost*/"/api/v1/getdetails?" +
                         new URLSearchParams({
                             uid: username,
                             usertype,

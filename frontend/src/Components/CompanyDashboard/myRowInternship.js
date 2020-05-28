@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TableRow, TableCell, Button, Grid } from '@material-ui/core';
 import ViewApplications from './ViewApplications'
 import { useGetAndSet } from 'react-context-hook';
-const baseUrl = "http://127.0.0.1:5000"
+const baseUrl = /*notLocalhost*/""
 
 function MyRow(props) {
 	const row = props.row;
@@ -13,7 +13,7 @@ function MyRow(props) {
 	var intervalId = 0;
 
 	async function fetchApplications() {
-		let res = await fetch(baseUrl + "/api/v1/students_internship_scholarship?" + new URLSearchParams({ uid }), {
+		let res = await fetch(/*noUrl*/ "/api/v1/students_internship_scholarship?" + new URLSearchParams({ uid }), {
 			mode: 'cors',
 		}).catch(e => console.log("Failed to fetch" + e));
 		if (res && res.ok) {
@@ -40,7 +40,7 @@ function MyRow(props) {
 	}
 
 	async function deleteInternship() {
-		let res = await fetch(baseUrl + "/api/v1/delete?" + new URLSearchParams({ uid, usertype: "internship" }), {
+		let res = await fetch(/*noUrl*/ "/api/v1/delete?" + new URLSearchParams({ uid, usertype: "internship" }), {
 			method: 'DELETE',
 			mode: 'cors',
 		}).catch(e => console.log("Failed to fetch" + e));

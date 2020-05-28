@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Container } from '@material-ui/core';
-const baseUrl = "http://127.0.0.1:5000"
+const baseUrl = /*notLocalhost*/""
 
 function OneApplicant(props) {
 	const details = props.details;
@@ -10,7 +10,7 @@ function OneApplicant(props) {
 
 	async function getAcceptanceProb() {
 		setClicked(true)
-		let res = await fetch(baseUrl + "/api/v1/internship_probability_acceptance?" + new URLSearchParams({ uid: props.internshipId, userid: details.uid }), {
+		let res = await fetch(/*noUrl*/ "/api/v1/internship_probability_acceptance?" + new URLSearchParams({ uid: props.internshipId, userid: details.uid }), {
 			mode: 'cors',
 		}).catch(e => console.log("Failed to fetch" + e));
 		// console.log(res)

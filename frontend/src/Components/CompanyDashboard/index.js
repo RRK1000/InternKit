@@ -6,7 +6,7 @@ import TableInternship from "./TableInternship"
 import { useStoreValue } from 'react-context-hook';
 import { Link as RouterLink } from 'react-router-dom';
 
-const baseUrl = "http://127.0.0.1:5000"
+const baseUrl = /*notLocalhost*/""
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +26,7 @@ function CompanyDashboard() {
   const refreshInternships = useStoreValue('refreshInternships', 1)
 
   const fetchInternships = useCallback(async () => {
-    let res = await fetch(baseUrl + "/api/v1/all_internship_scholarship", {
+    let res = await fetch(/*noUrl*/ "/api/v1/all_internship_scholarship", {
       mode: 'cors',
       headers: {
         "Content-Type": "application/json",

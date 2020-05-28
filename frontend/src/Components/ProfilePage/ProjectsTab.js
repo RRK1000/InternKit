@@ -120,10 +120,10 @@ export default function ProjectsTab() {
 
     // Fetching Previous project details
     fetch(
-        "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
-            username +
-            "&usertype=" +
-            usertype,
+        /*notLocalhost*/"/api/v1/getdetails?uid=" +
+        username +
+        "&usertype=" +
+        usertype,
         {
             method: "GET",
             mode: "cors",
@@ -163,14 +163,14 @@ export default function ProjectsTab() {
                     className={classes.project}
                     variant="outlined"
                     value={el.substr(0, el.search(";"))}
-                    // onChange={handleProjectChange.bind(i)}
+                // onChange={handleProjectChange.bind(i)}
                 />
                 <TextField
                     id={i}
                     label="Project Description"
                     variant="outlined"
                     value={el.substr(el.search(";") + 1, el.length)}
-                    // onChange={handleDescChange.bind(i)}
+                // onChange={handleDescChange.bind(i)}
                 />
             </Paper>
         ));
@@ -184,7 +184,7 @@ export default function ProjectsTab() {
         console.log(tmp)
 
         let ndetails =
-            "[" + "'" + tmp + "'" + "]";
+            "['" + tmp + "']";
         console.log(ndetails);
         const body = Object.assign(
             {},
@@ -197,7 +197,7 @@ export default function ProjectsTab() {
             }
         );
         console.log(body);
-        fetch("http://127.0.0.1:5000/api/v1/editdetails", {
+        fetch(/*notLocalhost*/"/api/v1/editdetails", {
             method: "POST",
             mode: "cors",
             headers: {

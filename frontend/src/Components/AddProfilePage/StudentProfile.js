@@ -233,7 +233,7 @@ export default function StudentProfile() {
             }
         );
         console.log(JSON.stringify(data));
-        fetch("http://127.0.0.1:5000/api/v1/addprofile", {
+        fetch(/*notLocalhost*/"/api/v1/addprofile", {
             method: "POST",
             mode: "cors",
             headers: {

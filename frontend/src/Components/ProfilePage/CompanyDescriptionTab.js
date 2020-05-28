@@ -36,7 +36,7 @@ export default function PersonalDetailsTab() {
     const [usertype] = useGetAndSet("usertype");
 
     fetch(
-        "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
+        /*notLocalhost*/"/api/v1/getdetails?uid=" +
             username +
             "&usertype=" +
             usertype,
@@ -77,7 +77,7 @@ export default function PersonalDetailsTab() {
         );
     };
     const editAcc = () => {
-        let ndetails = "[" + "'" + ncdescription + "'" + "]";
+        let ndetails = "['" + ncdescription + "']";
         console.log(JSON.stringify(ndetails));
         const body = Object.assign(
             {},
@@ -90,7 +90,7 @@ export default function PersonalDetailsTab() {
             }
         );
         console.log(body);
-        fetch("http://127.0.0.1:5000/api/v1/editdetails", {
+        fetch(/*notLocalhost*/"/api/v1/editdetails", {
             method: "POST",
             mode: "cors",
             headers: {

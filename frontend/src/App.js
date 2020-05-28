@@ -28,6 +28,7 @@ const storeConfig = {
 };
 
 function App() {
+    console.log("How many?");
     return (
         <Router>
             <Header />

@@ -50,7 +50,7 @@ export default function AccountTab() {
             { username, current_password: currentPassword, new_password: password, usertype, token: isLoggedIn}
         );
         console.log(data);
-        fetch("http://127.0.0.1:5000/api/v1/editpassword", {
+        fetch(/*notLocalhost*/"/api/v1/editpassword", {
             method: "POST",
             mode: "cors",
             headers: {

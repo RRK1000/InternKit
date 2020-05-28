@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TableRow, TableCell, Button, Link } from '@material-ui/core';
 import { useStoreValue } from 'react-context-hook';
-const baseUrl = "http://127.0.0.1:5000"
+const baseUrl = /*notLocalhost*/""
 
 function MyRow(props) {
 	const row = props.row;
@@ -18,7 +18,7 @@ function MyRow(props) {
 		if (hasApplied) return;
 		let data = { username, uid, usertype: "internship", token }
 		console.log(data);
-		let res = await fetch(baseUrl + "/api/v1/apply", {
+		let res = await fetch(/*noUrl*/ "/api/v1/apply", {
 			method: "PUT",
 			mode: 'cors',
 			headers: {
@@ -32,7 +32,7 @@ function MyRow(props) {
 	};
 
 	async function revokeInternship() {
-		let res = await fetch(baseUrl + "/api/v1/delete_applied?" + new URLSearchParams({ userid: username, uid }), {
+		let res = await fetch(/*noUrl*/ "/api/v1/delete_applied?" + new URLSearchParams({ userid: username, uid }), {
 			method: "DELETE",
 			mode: "cors"
 		}).catch(e => alert(e));

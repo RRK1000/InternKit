@@ -7,11 +7,12 @@ import sqlite3
 from flask import Flask, render_template, jsonify, request, abort
 from flask_cors import CORS
 
-import sys
-sys.path.insert(1, 'intelligent_component/')
-import my_probability_model
+# import sys
+# sys.path.insert(1, 'intelligent_component/')
+# import my_probability_model
 
-app = Flask(__name__)
+# app = Flask(__name__)
+app = Flask(__name__, static_folder='../build', static_url_path='/')
 CORS(app)
 
 RS500 = 500
@@ -36,6 +37,10 @@ def checksha(string):
                 return True
     return False
 
+# Serve index.hmtl for '/'
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 # <----------------------------MaxID----------------------------------------------------->
 """function is called to get the max id of a table for now used only for scholarship and internship table and used by various apis. So reuse this code as much as possible"""
@@ -1183,41 +1188,41 @@ def all_internships_scholarships():
 Api to call list of all available internships and scholarships
 url:/api/v1/internship_probability_acceptance?userid=vishnu&uid=i_0
 '''
-@app.route("/api/v1/internship_probability_acceptance", methods=["GET"])
-def internship_probability_acceptance():
-    req = request.get_json()
-    if request.method != "GET":
-        return jsonify({}), RS405
-    userid = request.args.get("userid")
-    uid = request.args.get("uid")
-    if userid == "" or uid == "":
-        return jsonify({}), RS400
-    if uid[0]!="i":
-        return jsonify({}),RS400
-    l=check_user_exists("student",userid,'')
-    l1=check_user_exists("internship",uid,'')
-    if(
-        len(l)==0 or len(l1)==0
-        ):
-        return jsonify({}),RS400
+# @app.route("/api/v1/internship_probability_acceptance", methods=["GET"])
+# def internship_probability_acceptance():
+#     req = request.get_json()
+#     if request.method != "GET":
+#         return jsonify({}), RS405
+#     userid = request.args.get("userid")
+#     uid = request.args.get("uid")
+#     if userid == "" or uid == "":
+#         return jsonify({}), RS400
+#     if uid[0]!="i":
+#         return jsonify({}),RS400
+#     l=check_user_exists("student",userid,'')
+#     l1=check_user_exists("internship",uid,'')
+#     if(
+#         len(l)==0 or len(l1)==0
+#         ):
+#         return jsonify({}),RS400
 
-    internship_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(uid)+"&usertype=internship").json()
-    student_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(userid)+"&usertype=student").json()
-    if(
-        str(internship_details["description"])==''
-                                                    or str(student_details["pdescription"])==''
-                                                    or str(student_details["skills"])==''):
-        return jsonify({}),RS400
+#     internship_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(uid)+"&usertype=internship").json()
+#     student_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(userid)+"&usertype=student").json()
+#     if(
+#         str(internship_details["description"])==''
+#                                                     or str(student_details["pdescription"])==''
+#                                                     or str(student_details["skills"])==''):
+#         return jsonify({}),RS400
 
-    # c_dataset = open("intelligent_component/c_requirements.txt", "r").read().lower()
-    # p_dataset= open("intelligent_component/Projects.txt","r").read().lower()
-    # skills_dataset=open("intelligent_component/skills.txt","r").readlines()
-    # probability_acceptance=my_probability_model.get_probability(c_dataset,p_dataset,skills_dataset)
-    #print(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
-    probability_acceptance=my_probability_model.get_probability(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
-    return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
-    #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
-    #return jsonify({"prob":str(checking.hello())}),RS200
+#     # c_dataset = open("intelligent_component/c_requirements.txt", "r").read().lower()
+#     # p_dataset= open("intelligent_component/Projects.txt","r").read().lower()
+#     # skills_dataset=open("intelligent_component/skills.txt","r").readlines()
+#     # probability_acceptance=my_probability_model.get_probability(c_dataset,p_dataset,skills_dataset)
+#     #print(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
+#     probability_acceptance=my_probability_model.get_probability(str(internship_details["description"]).strip(),str(student_details["pdescription"]).strip(),str(student_details["skills"]).strip())
+#     return jsonify({"probability_acceptance":str(probability_acceptance)}),RS200
+#     #print(str(internship_details["description"]),str(student_details["pdescription"]),str(student_details["skills"]))
+#     #return jsonify({"prob":str(checking.hello())}),RS200
     
     
 if __name__ == "__main__":

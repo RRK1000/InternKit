@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
-import {  useStoreValue } from "react-context-hook";
+import { useStoreValue } from "react-context-hook";
 
 const useStyles = (theme) => ({
     root: {
@@ -59,7 +59,7 @@ function AddInternship(props) {
             usertype,
         };
         console.log(data);
-        fetch("http://127.0.0.1:5000/api/v1/add_internship_scholarship", {
+        fetch(/*notLocalhost*/"/api/v1/add_internship_scholarship", {
             method: "PUT",
             mode: "cors",
             headers: {
@@ -85,104 +85,104 @@ function AddInternship(props) {
     return hasCreated ? (
         <Redirect to="/" />
     ) : (
-        <Container maxWidth="sm">
-            <Typography className={classes.heading} variant="h4">
-                Add Internship
+            <Container maxWidth="sm">
+                <Typography className={classes.heading} variant="h4">
+                    Add Internship
             </Typography>
-            <form
-                className={classes.root}
-                noValidate
-                autoComplete="off"
+                <form
+                    className={classes.root}
+                    noValidate
+                    autoComplete="off"
                 // onSubmit={this.onSubmit}
-            >
-                <Grid container>
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Job Title"
-                            name="itr_name"
-                            value={itr_name}
-                            variant="outlined"
-                            onChange={(e) => setItr_name(e.target.value)}
-                        />
-                    </Grid>
+                >
+                    <Grid container>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Job Title"
+                                name="itr_name"
+                                value={itr_name}
+                                variant="outlined"
+                                onChange={(e) => setItr_name(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Stipend provided"
-                            name="stipend"
-                            value={stipend}
-                            variant="outlined"
-                            onChange={(e) => setStipend(e.target.value)}
-                        />
-                    </Grid>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Stipend provided"
+                                name="stipend"
+                                value={stipend}
+                                variant="outlined"
+                                onChange={(e) => setStipend(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Required Branch"
-                            name="branch"
-                            value={branch}
-                            variant="outlined"
-                            onChange={(e) => setBranch(e.target.value)}
-                        />
-                    </Grid>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Required Branch"
+                                name="branch"
+                                value={branch}
+                                variant="outlined"
+                                onChange={(e) => setBranch(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="City"
-                            name="city"
-                            value={city}
-                            variant="outlined"
-                            onChange={(e) => setCity(e.target.value)}
-                        />
-                    </Grid>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="City"
+                                name="city"
+                                value={city}
+                                variant="outlined"
+                                onChange={(e) => setCity(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Description"
-                            name="description"
-                            value={description}
-                            variant="outlined"
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </Grid>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Description"
+                                name="description"
+                                value={description}
+                                variant="outlined"
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Minimum GPA"
-                            name="gpa"
-                            value={gpa}
-                            variant="outlined"
-                            onChange={(e) => setGpa(e.target.value)}
-                        />
-                    </Grid>
+                        <Grid container item>
+                            <TextField
+                                required
+                                id="outlined-required"
+                                label="Minimum GPA"
+                                name="gpa"
+                                value={gpa}
+                                variant="outlined"
+                                onChange={(e) => setGpa(e.target.value)}
+                            />
+                        </Grid>
 
-                    <Grid container item>
-                        <Button
-                            className={classes.button}
-                            variant="contained"
-                            color="primary"
-                            // type="submit"
-                            onClick={onSubmit}
-                        >
-                            Add Internship
+                        <Grid container item>
+                            <Button
+                                className={classes.button}
+                                variant="contained"
+                                color="primary"
+                                // type="submit"
+                                onClick={onSubmit}
+                            >
+                                Add Internship
                         </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </form>
-        </Container>
-    );
+                </form>
+            </Container>
+        );
 }
 
 export default withStyles(useStyles)(AddInternship);

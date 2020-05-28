@@ -125,7 +125,7 @@ export default function SkillsTab() {
 
     // Fetching Previous project details
     fetch(
-        "http://127.0.0.1:5000/api/v1/getdetails?uid=" +
+        /*notLocalhost*/"/api/v1/getdetails?uid=" +
             username +
             "&usertype=" +
             usertype,
@@ -184,7 +184,7 @@ export default function SkillsTab() {
             skillsList += skill.val[i] + "-" + values.val[i] + "\\n";
         }
 
-        let ndetails = "[" + "'" + skillsList + "'" + "]";
+        let ndetails = "['" + skillsList + "']";
         console.log(ndetails);
         const body = Object.assign(
             {},
@@ -197,7 +197,7 @@ export default function SkillsTab() {
             }
         );
         console.log(body);
-        fetch("http://127.0.0.1:5000/api/v1/editdetails", {
+        fetch(/*notLocalhost*/"/api/v1/editdetails", {
             method: "POST",
             mode: "cors",
             headers: {
