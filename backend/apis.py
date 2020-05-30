@@ -14,6 +14,8 @@ from flask_cors import CORS
 # app = Flask(__name__)
 app = Flask(__name__, static_folder='../build', static_url_path='/')
 CORS(app)
+ 
+dbUrl = "backend/scokit.db"
 
 RS500 = 500
 RS400 = 400
@@ -47,7 +49,7 @@ def index():
 
 
 def getmaxid(table):
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     l = list(cursorobj.execute("select * from " + table))
     if(len(l)!=0):
@@ -65,7 +67,7 @@ def getmaxid(table):
 
 
 def check_user_exists(table, userid, uid):
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     if table == "scholarship" or table == "internship":
         l = list(
@@ -167,7 +169,7 @@ def signup():
     print(l)
     if len(l) != 0:
         return jsonify({"message": "User already exists"}), RS400
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     if table == "student":
         sstr = (
@@ -249,7 +251,7 @@ def deluid():
     l = check_user_exists(table, name, "")
     print(l)
     if len(l) != 0:
-        con = sqlite3.connect("backend/scokit.db")
+        con = sqlite3.connect(dbUrl)
         cursorobj = con.cursor()
         if table == "student" or table == "emp_login":
             cursorobj.execute("delete from " + table +
@@ -390,7 +392,7 @@ def editdetails():
             print("Hiiiiiiiii")
             return jsonify({}), RS400
         print(sstr)
-        con = sqlite3.connect("backend/scokit.db")
+        con = sqlite3.connect(dbUrl)
         cursorobj = con.cursor()
         cursorobj.execute(sstr)
         con.commit()
@@ -463,7 +465,7 @@ def editpassword():
                 + "'"
             )
             print(sstr)
-            con = sqlite3.connect("backend/scokit.db")
+            con = sqlite3.connect(dbUrl)
             cursorobj = con.cursor()
             cursorobj.execute(sstr)
             con.commit()
@@ -677,7 +679,7 @@ def profile():
     print(l)
     if len(l) != 0:
         return jsonify({}), RS400
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     if table == "s_profile":
         if not ("education" in req and "college" in req and "branch" in req):
@@ -842,7 +844,7 @@ def add_internship_scholarship():
     print(l)
     if len(l) == 0:
         return jsonify({"message": "Unknown!"}), RS400
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     if table == "scholarship":
         if req["name"] == "":
@@ -974,7 +976,7 @@ def apply():
     if len(l) != 0 or len(l1) == 0:
         print(len(l), len(l1))
         return jsonify({"message": "Already applied"}), RS200
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     sstr = (
         "insert into "
@@ -1017,7 +1019,7 @@ def get_students():
     if username == "":
         return jsonify({}), RS400
     table = "applied_for"
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     print("select * from " + table + " where uid='" + username + "'")
     students_list = list(
@@ -1049,7 +1051,7 @@ usertype--> student or employee
 '''
 @app.route("/api/v1/internships_scholarships_posted_applied", methods=["GET"])
 def get_internships_scholarships():
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     req = request.get_json()
     if request.method != "GET":
@@ -1139,7 +1141,7 @@ def delapplied():
     l = check_user_exists(table, name, uid)
     print(l)
     if len(l) != 0:
-        con = sqlite3.connect("backend/scokit.db")
+        con = sqlite3.connect(dbUrl)
         cursorobj = con.cursor()
         cursorobj.execute("delete from " + table +
                           " where userid='" + name + "' and uid='"+uid+"'")
@@ -1158,7 +1160,7 @@ url:/api/v1/all_internship_scholarship
 def all_internships_scholarships():
     if request.method != "GET":
         return jsonify({}), RS405
-    con = sqlite3.connect("backend/scokit.db")
+    con = sqlite3.connect(dbUrl)
     cursorobj = con.cursor()
     # print("select * from " + table + " where uid='" + username + "'")
     scholarship_list = list(
