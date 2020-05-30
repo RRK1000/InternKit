@@ -15,7 +15,10 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='../build', static_url_path='/')
 CORS(app)
  
-dbUrl = "backend/scokit.db"
+dbUrl = "scokit.db"
+# dbUrl = "backend/scokit.db"
+# urlPath = "http://localhost:5000/api/v1"
+urlPath = "http://localhost:8000/api/v1"
 
 RS500 = 500
 RS400 = 400
@@ -1034,7 +1037,7 @@ def get_students():
     for _ in students_list:
         if(_[0] not in students_dict):
             students_dict[_[0]] = requests.get(
-                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype=student").json()
+                        urlPath + "/getdetails?uid="+str(_[0])+"&usertype=student").json()
     print(students_dict)
     return jsonify(students_dict), RS200
 
@@ -1076,11 +1079,11 @@ def get_internships_scholarships():
             if(_[2][0] == 'i'):
                 if(_[2] not in students_dict):
                     students_dict[_[2]] = requests.get(
-                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=internship").json()
+                        urlPath + "/getdetails?uid="+str(_[2])+"&usertype=internship").json()
             elif(_[2][0] == 's'):
                 if(_[2] not in students_dict):
                     students_dict[_[2]] = requests.get(
-                        "http://localhost:5000/api/v1/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
+                        urlPath + "/getdetails?uid="+str(_[2])+"&usertype=scholarship").json()
             else:
                 return jsonify({}), RS200
         # print(students_dict)
@@ -1115,7 +1118,7 @@ def get_internships_scholarships():
                 return jsonify({}), RS500
             if(_[0] not in internscholarship_dict):
                 internscholarship_dict[_[0]] = requests.get(
-                    "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+                    urlPath + "/getdetails?uid="+str(_[0])+"&usertype="+type).json()
     return (internscholarship_dict), RS200
 
 
@@ -1180,7 +1183,7 @@ def all_internships_scholarships():
             return jsonify({}), RS500
         if(_[0] not in internscholarship_dict):
             internscholarship_dict[_[0]] = requests.get(
-                "http://localhost:5000/api/v1/getdetails?uid="+str(_[0])+"&usertype="+type).json()
+                urlPath + "/getdetails?uid="+str(_[0])+"&usertype="+type).json()
     return (internscholarship_dict), RS200
 
 
@@ -1208,8 +1211,8 @@ url:/api/v1/internship_probability_acceptance?userid=vishnu&uid=i_0
 #         ):
 #         return jsonify({}),RS400
 
-#     internship_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(uid)+"&usertype=internship").json()
-#     student_details=requests.get("http://localhost:5000/api/v1/getdetails?uid="+str(userid)+"&usertype=student").json()
+#     internship_details=requests.get(urlPath + "/getdetails?uid="+str(uid)+"&usertype=internship").json()
+#     student_details=requests.get(urlPath + "/getdetails?uid="+str(userid)+"&usertype=student").json()
 #     if(
 #         str(internship_details["description"])==''
 #                                                     or str(student_details["pdescription"])==''
